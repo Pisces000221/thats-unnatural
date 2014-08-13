@@ -28,6 +28,31 @@ bool Splash::init()
     menu->setPosition(Vec2::ZERO);
     this->addChild(menu);
 
+    // Test physics
+    auto body = PhysicsBody::createEdgeBox(size, PHYSICSBODY_MATERIAL_DEFAULT, 3);
+    auto edgeNode = Node::create();
+    edgeNode->setPosition(Point(size.width / 2, size.height / 2));
+    edgeNode->setPhysicsBody(body);
+    this->addChild(edgeNode);
+
+    auto s1 = Sprite::create("CloseNormal.png");
+    s1->setPosition(Vec2(size.width * 0.5, size.height * 0.8));
+    auto b1 = PhysicsBody::createCircle(s1->getContentSize().width / 2);
+    s1->setPhysicsBody(b1);
+    this->addChild(s1);
+
+    auto s2 = Sprite::create("CloseNormal.png");
+    s2->setPosition(Vec2(size.width * 0.55, size.height * 0.7));
+    auto b2 = PhysicsBody::createCircle(s2->getContentSize().width / 2);
+    s2->setPhysicsBody(b2);
+    this->addChild(s2);
+
+    auto s3 = Sprite::create("CloseNormal.png");
+    s3->setPosition(Vec2(size.width * 0.46, size.height * 0.5));
+    auto b3 = PhysicsBody::createCircle(s3->getContentSize().width / 2);
+    s3->setPhysicsBody(b3);
+    this->addChild(s3);
+
     return true;
 }
 

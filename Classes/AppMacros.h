@@ -18,4 +18,12 @@ static cocos2d::Scene *createScene() { \
     return scene; \
 }
 
+#define PHY_SCENE_FUNC(__type__) \
+static cocos2d::Scene *createScene() { \
+    cocos2d::Scene *scene = cocos2d::Scene::createWithPhysics(); \
+    __type__ *layer = __type__::create(); \
+    scene->addChild(layer); \
+    return scene; \
+}
+
 #endif

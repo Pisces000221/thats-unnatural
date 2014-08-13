@@ -10,7 +10,7 @@ public:
     virtual bool init();
     void close(cocos2d::Ref *sender);
     CREATE_FUNC(Splash);
-    SCENE_FUNC(Splash);
+    PHY_SCENE_FUNC(Splash);
 };
 
 #endif
