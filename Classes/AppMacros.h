@@ -18,10 +18,22 @@ static cocos2d::Scene *createScene() { \
     return scene; \
 }
 
+#define PHY_CREATE_FUNC(__type__) \
+static __type__ *create(cocos2d::PhysicsWorld *world) { \
+    __type__ *ret = new __type__; \
+    if (ret && ret->init(world)) { \
+        ret->autorelease(); \
+        return ret; \
+    } else { \
+        delete ret; \
+        ret = nullptr; return nullptr; \
+    } \
+}
+
 #define PHY_SCENE_FUNC(__type__) \
 static cocos2d::Scene *createScene() { \
     cocos2d::Scene *scene = cocos2d::Scene::createWithPhysics(); \
-    __type__ *layer = __type__::create(); \
+    __type__ *layer = __type__::create(scene->getPhysicsWorld()); \
     scene->addChild(layer); \
     return scene; \
 }

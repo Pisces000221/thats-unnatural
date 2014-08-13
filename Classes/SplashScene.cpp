@@ -2,7 +2,7 @@
 #include "AppMacros.h"
 using namespace cocos2d;
 
-bool Splash::init()
+bool Splash::init(PhysicsWorld *world)
 {
     if (!Layer::init()) return false;
 
@@ -29,6 +29,10 @@ bool Splash::init()
     this->addChild(menu);
 
     // Test physics
+    Vec2 g = world->getGravity();
+    CCLOG("default gravity: (%.2f, %.2f)", g.x, g.y);
+    world->setGravity(Vec2(25, -90));
+
     auto body = PhysicsBody::createEdgeBox(size, PHYSICSBODY_MATERIAL_DEFAULT, 3);
     auto edgeNode = Node::create();
     edgeNode->setPosition(Point(size.width / 2, size.height / 2));
@@ -49,7 +53,8 @@ bool Splash::init()
 
     auto s3 = Sprite::create("CloseNormal.png");
     s3->setPosition(Vec2(size.width * 0.46, size.height * 0.5));
-    auto b3 = PhysicsBody::createCircle(s3->getContentSize().width / 2);
+    s3->setScale(2);
+    auto b3 = PhysicsBody::createCircle(s3->getContentSize().width);
     s3->setPhysicsBody(b3);
     this->addChild(s3);
 

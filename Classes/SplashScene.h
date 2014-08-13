@@ -7,9 +7,9 @@
 class Splash : public cocos2d::Layer
 {
 public:
-    virtual bool init();
+    virtual bool init(cocos2d::PhysicsWorld *world);
     void close(cocos2d::Ref *sender);
-    CREATE_FUNC(Splash);
+    PHY_CREATE_FUNC(Splash);
     PHY_SCENE_FUNC(Splash);
 };
 
