@@ -8,7 +8,6 @@ namespace bricks {
 
 Node *new_circle(float radius, PhysicsMaterial material)
 {
-    //DrawNode *node = DrawNode::create();
     Node *node = Node::create();
     node->setContentSize(Size(radius * 2, radius * 2));
     // Draw two circles to make a ring
@@ -23,9 +22,10 @@ Node *new_circle(float radius, PhysicsMaterial material)
     s->setScale((radius - 2) * 2 / s->getContentSize().width);
     s->setColor(Color3B(255, 192, 192));
     node->addChild(s, 2);
-    //node->drawDot(Vec2(radius, radius), radius, Color4F::BLACK);
-    //node->drawDot(Vec2(radius, radius), radius - 2, Color4F::WHITE);
     PhysicsBody *body = PhysicsBody::createCircle(radius, material);
+    // Stop those warnings
+    // cocos2d: Node warning: setPhysicsBody sets anchor point to Vec2::ANCHOR_MIDDLE.
+    node->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
     node->setPhysicsBody(body);
     return node;
 }
@@ -45,10 +45,9 @@ Node *new_triangle(float sidelen, PhysicsMaterial material)
     s->setScale((sidelen - 4.0 * SQRT_3) / s->getContentSize().width);
     s->setColor(Color3B(128, 255, 128));
     node->addChild(s, 2);
-    //node->drawDot(Vec2(radius, radius), radius, Color4F::BLACK);
-    //node->drawDot(Vec2(radius, radius), radius - 2, Color4F::WHITE);
     Vec2 points[] = { Vec2(sidelen * 0.5, radius * 1.5), Vec2(sidelen, 0), Vec2(0, 0) };
     PhysicsBody *body = PhysicsBody::createPolygon(points, 3, material);
+    node->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
     node->setPhysicsBody(body);
     return node;
 }
@@ -72,6 +71,7 @@ Node *new_rect(float width, float height, PhysicsMaterial material)
     s->getTexture()->setAntiAliasTexParameters();
     node->addChild(s, 2);
     PhysicsBody *body = PhysicsBody::createBox(Size(width, height), material);
+    node->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
     node->setPhysicsBody(body);
     return node;
 }
@@ -79,7 +79,6 @@ Node *new_rect(float width, float height, PhysicsMaterial material)
 Node *new_random(float radius, PhysicsMaterial material)
 {
     int r = rand() % 3;
-    //CCLOG("generate shape type %d", r);
     switch (r) {
         case 0:
             return new_circle(radius, material);

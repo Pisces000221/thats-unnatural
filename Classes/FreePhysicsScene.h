@@ -11,6 +11,14 @@ public:
     GO_BACK_FUNC;
     PHY_CREATE_FUNC(FreePhysics);
     PHY_SCENE_FUNC(FreePhysics);
+
+protected:
+    bool onTouchBegan(Touch *, Event *);
+    void onTouchMoved(Touch *, Event *);
+    void onTouchEnded(Touch *, Event *);
+
+    // Stores touches that are not released
+    std::unordered_map<int, Node *> _nails;
 };
 
 #endif
