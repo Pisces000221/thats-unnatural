@@ -59,6 +59,7 @@ set(GAME_LOGIC_SRC
   Classes/Global.cpp
   Classes/SplashScene.cpp
   Classes/StartupScene.cpp
+  Classes/FreePhysicsScene.cpp
 )
 
 if( UNIX ) #assume linux
