@@ -1,4 +1,5 @@
 #include "AppMacros.h"
+#include "Bricks.h"
 #include "FreePhysicsScene.h"
 
 #include "StartupScene.h"
@@ -19,16 +20,16 @@ bool Startup::init(PhysicsWorld *world)
     edge_node->setPosition(Vec2(size.width / 2, size.height / 2));
     edge_node->setPhysicsBody(edge_body);
     this->addChild(edge_node);
+    world->setDebugDrawMask(0);
     // The unnatural gravity
     world->setGravity(Vec2(0, 0));
     // Create fifteen random objects
     for (int i = 0; i < 15; i++) {
-        auto sprite = Sprite::create("circle.png");
-        sprite->setPosition(Vec2(size.width * RAND_0_1, size.height * RAND_0_1));
-        auto gangti = PhysicsBody::createCircle(sprite->getContentSize().width / 2, normal_material);
-        gangti->applyForce(Vec2(15.0 * RAND_0_1 - 8.0, 15.0 * RAND_0_1 - 8.0) * 1000);
-        sprite->setPhysicsBody(gangti);     // Well, 'body' in Chinese...
-        this->addChild(sprite);
+        auto obj = bricks::new_random(24);
+        obj->setPosition(Vec2(size.width * RAND_0_1, size.height * RAND_0_1));
+        obj->getPhysicsBody()
+            ->applyForce(Vec2(15.0 * RAND_0_1 - 8.0, 15.0 * RAND_0_1 - 8.0) * 1000);
+        this->addChild(obj);
     }
 
     // The title

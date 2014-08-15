@@ -9,15 +9,12 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="48"
-   height="48"
+   width="1"
+   height="1"
    id="svg2"
    version="1.1"
    inkscape:version="0.48.4 r9939"
-   inkscape:export-filename="circle.png"
-   inkscape:export-xdpi="90"
-   inkscape:export-ydpi="90"
-   sodipodi:docname="circle.svg">
+   sodipodi:docname="新建文档 1">
   <defs
      id="defs4" />
   <sodipodi:namedview
@@ -25,11 +22,11 @@
      pagecolor="#ffffff"
      bordercolor="#666666"
      borderopacity="1.0"
-     inkscape:pageopacity="0.0"
+     inkscape:pageopacity="1"
      inkscape:pageshadow="2"
-     inkscape:zoom="12.645833"
-     inkscape:cx="24"
-     inkscape:cy="24"
+     inkscape:zoom="0.35"
+     inkscape:cx="375"
+     inkscape:cy="520"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -54,16 +51,5 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(0,-1004.3622)">
-    <path
-       sodipodi:type="arc"
-       style="color:#000000;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:2;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
-       id="path2985"
-       sodipodi:cx="11.505766"
-       sodipodi:cy="15.934102"
-       sodipodi:rx="5.1004944"
-       sodipodi:ry="5.1004944"
-       d="m 16.60626,15.934102 c 0,2.816925 -2.283569,5.100494 -5.100494,5.100494 -2.8169254,0 -5.1004945,-2.283569 -5.1004945,-5.100494 0,-2.816925 2.2835691,-5.100494 5.1004945,-5.100494 2.816925,0 5.100494,2.283569 5.100494,5.100494 z"
-       transform="matrix(4.7054262,0,0,4.7054262,-30.139533,953.38545)" />
-  </g>
+     transform="translate(0,-1051.3622)" />
 </svg>

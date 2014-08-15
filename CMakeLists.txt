@@ -57,6 +57,7 @@ endif()
 set(GAME_LOGIC_SRC
   Classes/AppDelegate.cpp
   Classes/Global.cpp
+  Classes/Bricks.cpp
   Classes/SplashScene.cpp
   Classes/StartupScene.cpp
   Classes/FreePhysicsScene.cpp
