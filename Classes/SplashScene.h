@@ -4,13 +4,12 @@
 #include "cocos2d.h"
 #include "AppMacros.h"
 
-class Splash : public cocos2d::Layer
+class Splash : public cocos2d::LayerColor
 {
 public:
-    virtual bool init(cocos2d::PhysicsWorld *world);
-    void close(cocos2d::Ref *sender);
-    PHY_CREATE_FUNC(Splash);
-    PHY_SCENE_FUNC(Splash);
+    virtual bool init();
+    CREATE_FUNC(Splash);
+    SCENE_FUNC(Splash);
 };
 
 #endif

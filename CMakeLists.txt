@@ -56,6 +56,7 @@ endif()
 
 set(GAME_LOGIC_SRC
   Classes/AppDelegate.cpp
+  Classes/Global.cpp
   Classes/SplashScene.cpp
 )
 

@@ -1,4 +1,5 @@
 *~
+*.swp
 bin/
 cocos2d/
 linux-build/

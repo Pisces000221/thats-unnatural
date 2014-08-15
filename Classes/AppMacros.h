@@ -1,6 +1,9 @@
 #ifndef __MACROS_H__
 #define __MACROS_H__
 
+#include "cocos2d.h"
+#include <string>
+
 // Application Settings
 #define IS_USING_SOUND 1
 
@@ -18,6 +21,7 @@ static cocos2d::Scene *createScene() { \
     return scene; \
 }
 
+// Static create functions
 #define PHY_CREATE_FUNC(__type__) \
 static __type__ *create(cocos2d::PhysicsWorld *world) { \
     __type__ *ret = new __type__; \
@@ -37,5 +41,11 @@ static cocos2d::Scene *createScene() { \
     scene->addChild(layer); \
     return scene; \
 }
+
+// Global function declarations
+cocos2d::Label *LABEL(std::string text, int size = 12, 
+    std::string style = "", float maxlen = 0);
+
+// Global macro functions
 
 #endif
