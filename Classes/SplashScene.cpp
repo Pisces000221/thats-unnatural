@@ -1,5 +1,7 @@
-#include "SplashScene.h"
 #include "AppMacros.h"
+#include "StartupScene.h"
+
+#include "SplashScene.h"
 using namespace cocos2d;
 
 bool Splash::init()
@@ -24,6 +26,11 @@ bool Splash::init()
     lbl_cocos2dx->setAnchorPoint(Vec2::ANCHOR_MIDDLE_LEFT);
     lbl_cocos2dx->setNormalizedPosition(Vec2(0, 0.15));
     this->addChild(lbl_cocos2dx);
+
+    this->getScheduler()->schedule([](float dt) {
+        Director::getInstance()->replaceScene(TransitionFade::create(
+            0.8, Startup::createScene(), Color3B::WHITE));
+    }, this, 1, false, "SPLASH_GO_ON");
 
     return true;
 }

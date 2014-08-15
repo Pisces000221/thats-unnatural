@@ -47,5 +47,6 @@ cocos2d::Label *LABEL(std::string text, int size = 12,
     std::string style = "", float maxlen = 0);
 
 // Global macro functions
+#define RAND_0_1 ((float)rand() / (float)RAND_MAX)
 
 #endif

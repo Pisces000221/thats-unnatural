@@ -58,6 +58,7 @@ set(GAME_LOGIC_SRC
   Classes/AppDelegate.cpp
   Classes/Global.cpp
   Classes/SplashScene.cpp
+  Classes/StartupScene.cpp
 )
 
 if( UNIX ) #assume linux
