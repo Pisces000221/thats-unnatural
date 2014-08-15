@@ -13,6 +13,7 @@ LOCAL_MODULE_FILENAME := libcocos2dcpp
 LOCAL_SRC_FILES := unnatural/main.cpp \
                    ../../Classes/AppDelegate.cpp \
                    ../../Classes/Global.cpp \
+                   ../../Classes/Bricks.cpp \
                    ../../Classes/SplashScene.cpp \
                    ../../Classes/StartupScene.cpp \
                    ../../Classes/FreePhysicsScene.cpp

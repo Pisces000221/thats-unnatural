@@ -21,7 +21,7 @@ Node *new_circle(float radius, PhysicsMaterial material)
     s = Sprite::create("images/circle.png");
     s->setPosition(radius, radius);
     s->setScale((radius - 2) * 2 / s->getContentSize().width);
-    s->setColor(Color3B::WHITE);
+    s->setColor(Color3B(255, 192, 192));
     node->addChild(s, 2);
     //node->drawDot(Vec2(radius, radius), radius, Color4F::BLACK);
     //node->drawDot(Vec2(radius, radius), radius - 2, Color4F::WHITE);
@@ -43,7 +43,7 @@ Node *new_triangle(float sidelen, PhysicsMaterial material)
     s = Sprite::create("images/triangle.png");
     s->setPosition(Vec2(sidelen, radius * 1.5 - 0.5));
     s->setScale((sidelen - 4.0 * SQRT_3) / s->getContentSize().width);
-    s->setColor(Color3B::WHITE);
+    s->setColor(Color3B(128, 255, 128));
     node->addChild(s, 2);
     //node->drawDot(Vec2(radius, radius), radius, Color4F::BLACK);
     //node->drawDot(Vec2(radius, radius), radius - 2, Color4F::WHITE);
@@ -68,7 +68,7 @@ Node *new_rect(float width, float height, PhysicsMaterial material)
     s = Sprite::create("images/white_pixel.png");
     s->setPosition(Vec2(width * 0.5, height * 0.5));
     s->setScale(width - 4, height - 4);
-    s->setColor(Color3B::WHITE);
+    s->setColor(Color3B(128, 128, 255));
     s->getTexture()->setAntiAliasTexParameters();
     node->addChild(s, 2);
     PhysicsBody *body = PhysicsBody::createBox(Size(width, height), material);
