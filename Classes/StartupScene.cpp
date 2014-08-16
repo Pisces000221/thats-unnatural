@@ -32,6 +32,22 @@ bool Startup::init(PhysicsWorld *world)
         this->addChild(obj);
     }
 
+    // Tap the bigger brick 10 times to toggle debug draw visibility
+    auto item_toggledbg = MenuItem::create([world](Ref *sender) {
+        int count = ((Node *)sender)->getTag();
+        if (++count >= 10) {
+            world->setDebugDrawMask(1 - world->getDebugDrawMask());
+            count = 0;
+        }
+        ((Node *)sender)->setTag(count);
+    });
+    auto brick_toggledbg = bricks::new_random(40);
+    item_toggledbg->addChild(brick_toggledbg);
+    item_toggledbg->setPosition(Vec2(100, 400));
+    item_toggledbg->setPhysicsBody(brick_toggledbg->getPhysicsBody());
+    brick_toggledbg->setAnchorPoint(Vec2::ZERO);
+    item_toggledbg->setContentSize(brick_toggledbg->getContentSize());
+
     // The title
     auto lbl_thats = LABEL("That\'s", 40);
     lbl_thats->setPosition(Vec2(size.width * 0.5, size.height * 0.6));
@@ -46,11 +62,15 @@ bool Startup::init(PhysicsWorld *world)
 
     // The menus
     // Free mode
+    auto item_levels = MenuItemLabel::create(
+        LABEL("Levels", 40, "Bold"),
+        [this](Ref *sender) { GO_TO_SCENE(FreePhysics); });
+    item_levels->setPosition(Vec2(size.width * 0.382, size.height * 0.3));
     auto item_freemode = MenuItemLabel::create(
         LABEL("Free mode", 40, "Bold"),
-        [this](Object *sender) { GO_TO_SCENE(FreePhysics); });
-    item_freemode->setPosition(Vec2(size.width * 0.25, size.height * 0.3));
-    auto menu = Menu::create(item_freemode, nullptr);
+        [this](Ref *sender) { GO_TO_SCENE(FreePhysics); });
+    item_freemode->setPosition(Vec2(size.width * 0.382, size.height * 0.2));
+    auto menu = Menu::create(item_toggledbg, item_levels, item_freemode, nullptr);
     menu->setPosition(Vec2::ZERO);
     this->addChild(menu);
 
