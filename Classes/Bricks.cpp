@@ -92,9 +92,14 @@ Node *new_random(float radius, PhysicsMaterial material)
     }
 }
 
+Node *get_coloured_part(Node *brick)
+{
+    return brick->getChildByTag(TAG_COLOURED_PART);
+}
+
 void set_brick_colour(Node *brick, Color3B colour)
 {
-    Node *coloured_part = brick->getChildByTag(TAG_COLOURED_PART);
+    Node *coloured_part = get_coloured_part(brick);
     if (coloured_part) coloured_part->setColor(colour);
 }
 

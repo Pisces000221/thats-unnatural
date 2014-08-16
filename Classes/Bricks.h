@@ -20,6 +20,7 @@ Node *new_rect(float width, float height,
 Node *new_random(float radius,
     PhysicsMaterial material = PHYSICSBODY_MATERIAL_DEFAULT);
 
+Node *get_coloured_part(Node *brick);
 void set_brick_colour(Node *brick, Color3B colour);
 
 }

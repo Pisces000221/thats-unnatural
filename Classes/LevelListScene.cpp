@@ -5,6 +5,7 @@
 using namespace cocos2d;
 
 #define LEVEL_BRICK_SIDELEN 64
+
 bool LevelList::init(PhysicsWorld *world)
 {
     if (!LayerColor::initWithColor(Color4B::WHITE)) return false;
@@ -39,6 +40,34 @@ bool LevelList::init(PhysicsWorld *world)
         this->addChild(brk_level);
     }
 
+    // Enable touching
+    auto listener = EventListenerTouchOneByOne::create();
+    listener->onTouchBegan = CC_CALLBACK_2(LevelList::onTouchBegan, this);
+    listener->onTouchMoved = CC_CALLBACK_2(LevelList::onTouchMoved, this);
+    listener->onTouchEnded = CC_CALLBACK_2(LevelList::onTouchEnded, this);
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
+
     return true;
+}
+
+// Enable dragging & selecting
+bool LevelList::onTouchBegan(Touch* touch, Event* event)
+{
+    auto location = touch->getLocation();
+    auto arr = this->getScene()->getPhysicsWorld()->getShapes(location);
+    if (arr.size() == 0) return false;
+
+    PhysicsBody *body = arr.at(0)->getBody();
+    Node *node = body->getNode();
+    bricks::get_coloured_part(node)->runAction(TintTo::create(0.3, 216, 216, 255));
+    return true;
+}
+
+void LevelList::onTouchMoved(Touch *touch, Event *event)
+{
+}
+
+void LevelList::onTouchEnded(Touch *touch, Event *event)
+{
 }
 

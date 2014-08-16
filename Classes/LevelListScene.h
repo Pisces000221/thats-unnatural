@@ -10,6 +10,11 @@ public:
     virtual bool init(cocos2d::PhysicsWorld *world);
     PHY_CREATE_FUNC(LevelList);
     PHY_SCENE_FUNC(LevelList);
+
+protected:
+    bool onTouchBegan(Touch *, Event *);
+    void onTouchMoved(Touch *, Event *);
+    void onTouchEnded(Touch *, Event *);
 };
 
 #endif
