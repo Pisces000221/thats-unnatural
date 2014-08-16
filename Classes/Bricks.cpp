@@ -21,7 +21,7 @@ Node *new_circle(float radius, PhysicsMaterial material)
     s->setPosition(radius, radius);
     s->setScale((radius - 2) * 2 / s->getContentSize().width);
     s->setColor(Color3B(255, 192, 192));
-    node->addChild(s, 2);
+    node->addChild(s, 2, TAG_COLOURED_PART);
     PhysicsBody *body = PhysicsBody::createCircle(radius, material);
     // Stop those warnings
     // cocos2d: Node warning: setPhysicsBody sets anchor point to Vec2::ANCHOR_MIDDLE.
@@ -44,7 +44,7 @@ Node *new_triangle(float sidelen, PhysicsMaterial material)
     s->setPosition(Vec2(sidelen, radius * 1.5 - 0.5));
     s->setScale((sidelen - 4.0 * SQRT_3) / s->getContentSize().width);
     s->setColor(Color3B(128, 255, 128));
-    node->addChild(s, 2);
+    node->addChild(s, 2, TAG_COLOURED_PART);
     Vec2 points[] = { Vec2(sidelen * 0.5, radius * 1.5), Vec2(sidelen, 0), Vec2(0, 0) };
     PhysicsBody *body = PhysicsBody::createPolygon(points, 3, material);
     node->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
@@ -69,7 +69,7 @@ Node *new_rect(float width, float height, PhysicsMaterial material)
     s->setScale(width - 4, height - 4);
     s->setColor(Color3B(128, 128, 255));
     s->getTexture()->setAntiAliasTexParameters();
-    node->addChild(s, 2);
+    node->addChild(s, 2, TAG_COLOURED_PART);
     PhysicsBody *body = PhysicsBody::createBox(Size(width, height), material);
     node->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
     node->setPhysicsBody(body);
@@ -90,6 +90,12 @@ Node *new_random(float radius, PhysicsMaterial material)
             // Never reach this!
             return nullptr;
     }
+}
+
+void set_brick_colour(Node *brick, Color3B colour)
+{
+    Node *coloured_part = brick->getChildByTag(TAG_COLOURED_PART);
+    if (coloured_part) coloured_part->setColor(colour);
 }
 
 }

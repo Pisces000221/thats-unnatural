@@ -60,13 +60,16 @@ static cocos2d::Scene *createScene() { \
         FadeOut::create(0.4), \
         RemoveSelf::create(), nullptr)); } while (0)
 // Runs an animation and go back
-#define CREATE_GO_BACK_MENUITEM(_layername, _varname) \
-    MenuItemImage *_varname = MenuItemImage::create( \
+#define CREATE_GO_BACK_MENUITEM do { \
+    MenuItemImage *_item = MenuItemImage::create( \
         "images/back.png", "images/back.png", \
-        CC_CALLBACK_1(_layername::goBack, this)); \
-    _varname->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT); \
-    _varname->setNormalizedPosition(Vec2::ANCHOR_TOP_LEFT); \
-    _varname->setScale((HEIGHT_RATIO - 1) * 0.4 + 1);
+        [this](Ref *sender) { GO_BACK_ANIMATED; }); \
+    _item->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT); \
+    _item->setNormalizedPosition(Vec2::ANCHOR_TOP_LEFT); \
+    _item->setScale((HEIGHT_RATIO - 1) * 0.4 + 1); \
+    Menu *_menu = Menu::create(_item, nullptr); \
+    _menu->setPosition(Vec2::ZERO); \
+    this->addChild(_menu); } while (0)
 // Create a go back method. Can be used without using namespace cocos2d
 #define GO_BACK_ANIMATED do { \
     cocos2d::LayerColor *cover = cocos2d::LayerColor::create(cocos2d::Color4B::WHITE); \
@@ -75,7 +78,6 @@ static cocos2d::Scene *createScene() { \
     cover->runAction(cocos2d::Sequence::create( \
         cocos2d::FadeIn::create(0.4), \
         cocos2d::CallFunc::create([]() { cocos2d::Director::getInstance()->popScene(); }), nullptr)); } while (0)
-#define GO_BACK_FUNC virtual void goBack(cocos2d::Ref *sender) { GO_BACK_ANIMATED; }
 
 // Global function declarations
 cocos2d::Label *LABEL(std::string text, int size = 12, 
@@ -83,6 +85,7 @@ cocos2d::Label *LABEL(std::string text, int size = 12,
 
 // Global macro functions
 #define RAND_0_1 ((float)rand() / (float)RAND_MAX)
+#define RAND_DECIMAL(lo, hi) (lo + RAND_0_1 * (hi - lo))
 
 #endif
 

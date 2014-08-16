@@ -1,6 +1,7 @@
 #include "AppMacros.h"
 #include "Bricks.h"
 #include "FreePhysicsScene.h"
+#include "LevelListScene.h"
 
 #include "StartupScene.h"
 using namespace cocos2d;
@@ -42,6 +43,7 @@ bool Startup::init(PhysicsWorld *world)
         ((Node *)sender)->setTag(count);
     });
     auto brick_toggledbg = bricks::new_random(40);
+    bricks::set_brick_colour(brick_toggledbg, Color3B::YELLOW);
     item_toggledbg->addChild(brick_toggledbg);
     item_toggledbg->setPosition(Vec2(100, 400));
     item_toggledbg->setPhysicsBody(brick_toggledbg->getPhysicsBody());
@@ -64,7 +66,7 @@ bool Startup::init(PhysicsWorld *world)
     // Free mode
     auto item_levels = MenuItemLabel::create(
         LABEL("Levels", 40, "Bold"),
-        [this](Ref *sender) { GO_TO_SCENE(FreePhysics); });
+        [this](Ref *sender) { GO_TO_SCENE(LevelList); });
     item_levels->setPosition(Vec2(size.width * 0.382, size.height * 0.3));
     auto item_freemode = MenuItemLabel::create(
         LABEL("Free mode", 40, "Bold"),

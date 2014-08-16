@@ -61,6 +61,7 @@ set(GAME_LOGIC_SRC
   Classes/SplashScene.cpp
   Classes/StartupScene.cpp
   Classes/FreePhysicsScene.cpp
+  Classes/LevelListScene.cpp
 )
 
 if( UNIX ) #assume linux
