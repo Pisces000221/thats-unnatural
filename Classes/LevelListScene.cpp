@@ -85,6 +85,7 @@ void LevelList::onTouchMoved(Touch *touch, Event *event)
     if (_dragStarted) {
         _frontLayer->setPositionY(std::min(0.f, location.y - _dragStartPosY));
     } else if (touch->getStartLocation().getDistance(location) > 10) {
+        // Not tapping on a brick now... So start dragging will help, perhaps.
         resetSelected();
         _dragStartPosY = location.y - _frontLayer->getPositionY();
         _dragStarted = true;

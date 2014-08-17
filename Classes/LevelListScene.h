@@ -16,15 +16,15 @@ public:
     static const cocos2d::Color3B groupColours[GROUP_COLOUR_COUNT];
 
 protected:
-    cocos2d::Layer *_frontLayer;
+    cocos2d::Layer *_frontLayer;    // The physics bodies are placed here
 
     bool onTouchBegan(Touch *, Event *);
     void onTouchMoved(Touch *, Event *);
     void onTouchEnded(Touch *, Event *);
-    void resetSelected();
+    void resetSelected();           // Reset the colour of the selected brick
 
-    cocos2d::Node *_selectedNode;
-    cocos2d::Color3B _lastColour;
+    cocos2d::Node *_selectedNode;   // Selected brick (tapped but not released)
+    cocos2d::Color3B _lastColour;   // The initial colour of the selected brick
     bool _dragStarted;
     float _dragStartPosY;
 };
