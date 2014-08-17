@@ -42,7 +42,7 @@ bool LevelList::init(PhysicsWorld *world)
     // The levels
     float cur_height = 0;
     for (int i = 0; i < 90; i++) {
-        auto brk_level = bricks::new_rect(LEVEL_BRICK_SIDELEN, LEVEL_BRICK_SIDELEN);
+        auto brk_level = bricks::new_circle(LEVEL_BRICK_SIDELEN * 0.5);
         bricks::set_brick_colour(brk_level, groupColours[(i / 10) % GROUP_COLOUR_COUNT]);
         cur_height += RAND_DECIMAL(-0.5, 1.5) * LEVEL_BRICK_SIDELEN;
         brk_level->setPosition(Vec2(
