@@ -15,6 +15,7 @@ LOCAL_SRC_FILES := unnatural/main.cpp \
                    ../../Classes/Global.cpp \
                    ../../Classes/Bricks.cpp \
                    ../../Classes/widgets/GravityPicker.cpp \
+                   ../../Classes/widgets/Dashboard.cpp \
                    ../../Classes/SplashScene.cpp \
                    ../../Classes/StartupScene.cpp \
                    ../../Classes/LevelListScene.cpp \
