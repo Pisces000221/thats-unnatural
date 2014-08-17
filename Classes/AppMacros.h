@@ -69,7 +69,7 @@ static cocos2d::Scene *createScene() { \
     _item->setScale((HEIGHT_RATIO - 1) * 0.4 + 1); \
     Menu *_menu = Menu::create(_item, nullptr); \
     _menu->setPosition(Vec2::ZERO); \
-    this->addChild(_menu); } while (0)
+    this->addChild(_menu, INT_MAX - 10); } while (0)
 // Create a go back method. Can be used without using namespace cocos2d
 #define GO_BACK_ANIMATED do { \
     cocos2d::LayerColor *cover = cocos2d::LayerColor::create(cocos2d::Color4B::WHITE); \
