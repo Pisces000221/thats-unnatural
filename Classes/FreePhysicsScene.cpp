@@ -1,6 +1,6 @@
 #include "AppMacros.h"
 #include "Bricks.h"
-#include "widgets/GravityPicker.h"
+#include "widgets/Dashboard.h"
 
 #include "FreePhysicsScene.h"
 using namespace cocos2d;
@@ -34,15 +34,14 @@ bool FreePhysics::init(PhysicsWorld *world)
     }, this, 0.2, false, "FREEPHYSICS_GEN");
 
     CCLOG("Default gravity: (%.5f, %.5f)", world->getGravity().x, world->getGravity().y);
-    // A gravity picker
-    // TODO: Put this one in a dashboard that can be hidden
-    auto picker = GravityPicker::create();
-    picker->setAnchorPoint(Vec2::ANCHOR_MIDDLE_RIGHT);
-    picker->setNormalizedPosition(Vec2(0.95, 0.2));
-    picker->valueChangedCallback = [world](Vec2 gravity) {
+
+    // The dashboard
+    auto dashboard = Dashboard::create();
+    dashboard->setPosition(Vec2(size.width, 0));
+    this->addChild(dashboard);
+    dashboard->addGravityPicker([world](Vec2 gravity) {
         world->setGravity(gravity);
-    };
-    this->addChild(picker);
+    });
 
     // Enable touching
     auto listener = EventListenerTouchOneByOne::create();

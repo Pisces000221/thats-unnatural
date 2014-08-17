@@ -21,6 +21,7 @@ bool GravityPicker::init()
     this->setContentSize(bg->getContentSize());
 
     _thumb = Sprite::create("images/gpicker_thumb.png");
+    _thumb->setPosition(GP_ORIGIN - Vec2(0, GP_RADIUS * 0.5));
     this->addChild(_thumb);
 
     auto listener = EventListenerTouchOneByOne::create();
