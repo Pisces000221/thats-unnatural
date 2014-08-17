@@ -31,7 +31,7 @@ bool Dashboard::init()
                     this->runAction(EaseSineOut::create(
                         MoveBy::create(0.5, Vec2(_contentSize.width, 0))));
                     ((Node *)sender)->runAction(Sequence::create(
-                        DelayTime::create(0.3), FadeIn::create(0.2)));
+                        DelayTime::create(0.3), FadeIn::create(0.2), nullptr));
                 });
             hider_item->setOpacity(0);
             hider_item->setScale(_contentSize.width, _contentSize.height);
