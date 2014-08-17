@@ -14,8 +14,10 @@ LOCAL_SRC_FILES := unnatural/main.cpp \
                    ../../Classes/AppDelegate.cpp \
                    ../../Classes/Global.cpp \
                    ../../Classes/Bricks.cpp \
+                   ../../Classes/widgets/GravityPicker.cpp \
                    ../../Classes/SplashScene.cpp \
                    ../../Classes/StartupScene.cpp \
+                   ../../Classes/LevelListScene.cpp \
                    ../../Classes/FreePhysicsScene.cpp
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../../Classes
