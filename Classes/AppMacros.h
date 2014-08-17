@@ -87,5 +87,7 @@ cocos2d::Label *LABEL(std::string text, int size = 12,
 #define RAND_0_1 ((float)rand() / (float)RAND_MAX)
 #define RAND_DECIMAL(lo, hi) (lo + RAND_0_1 * (hi - lo))
 
+#define ENSURE_IN_RANGE(__v, __lo, __hi) if (__v < __lo) __v = __lo; else if (__v > __hi) __v = __hi
+
 #endif
 

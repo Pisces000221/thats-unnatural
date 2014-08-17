@@ -58,6 +58,7 @@ set(GAME_LOGIC_SRC
   Classes/AppDelegate.cpp
   Classes/Global.cpp
   Classes/Bricks.cpp
+  Classes/widgets/GravityPicker.cpp
   Classes/SplashScene.cpp
   Classes/StartupScene.cpp
   Classes/FreePhysicsScene.cpp
