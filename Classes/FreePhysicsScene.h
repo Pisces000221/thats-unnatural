@@ -3,6 +3,7 @@
 
 #include "cocos2d.h"
 #include "AppMacros.h"
+#include "Bricks.h"
 
 class FreePhysics : public cocos2d::LayerColor
 {
@@ -18,6 +19,8 @@ protected:
 
     // Stores touches that are not released
     std::unordered_map<int, Node *> _nails;
+
+    bricks::etype _enabledBrickTypes;
 };
 
 #endif

@@ -24,14 +24,6 @@ bool FreePhysics::init(PhysicsWorld *world)
     tray_node->setColor(Color3B::YELLOW);
     tray_node->setPhysicsBody(tray_body);
     this->addChild(tray_node);
-    // Turn on timer
-    this->getScheduler()->schedule([this, size](float dt) {
-        // Generate a brick with a random shape
-        auto obj = bricks::new_random(24);
-        obj->setPosition(Vec2(size.width * RAND_0_1, size.height + BRICK_INIT_Y_OFFSET));
-        obj->getPhysicsBody()->setTag(TAG_DRAGGABLE);
-        this->addChild(obj);
-    }, this, 0.2, false, "FREEPHYSICS_GEN");
 
     CCLOG("Default gravity: (%.5f, %.5f)", world->getGravity().x, world->getGravity().y);
 
@@ -46,12 +38,25 @@ bool FreePhysics::init(PhysicsWorld *world)
     dashboard->addLabel("BRICKS");
     const std::string brick_names[] = { "Balls", "Boxes", "Triangles" };
     const int brick_names_count = 3;
+    _enabledBrickTypes = bricks::FLAG_ALL_ENABLED;
     for (int i = 0; i < brick_names_count; i++) {
         int _i = i;
         dashboard->addTickButton(brick_names[i], [this, _i](bool b) {
-            CCLOG("%d %s", _i, b ? "Yes" : "No");
-        }, true);
+            // http://stackoverflow.com/questions/47981
+            // http://stackoverflow.com/questions/6916974
+            if (b) _enabledBrickTypes |= 1 << _i;
+            else _enabledBrickTypes &= ~(1 << _i);
+        }, _enabledBrickTypes & 1 << _i);
     }
+
+    // Turn on timer
+    this->getScheduler()->schedule([this, size](float dt) {
+        // Generate a brick with a random shape
+        auto obj = bricks::new_random(24, _enabledBrickTypes);
+        obj->setPosition(Vec2(size.width * RAND_0_1, size.height + BRICK_INIT_Y_OFFSET));
+        obj->getPhysicsBody()->setTag(TAG_DRAGGABLE);
+        this->addChild(obj);
+    }, this, 0.2, false, "FREEPHYSICS_GEN");
 
     // Enable touching
     auto listener = EventListenerTouchOneByOne::create();
