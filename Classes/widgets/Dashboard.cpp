@@ -1,5 +1,6 @@
 #include "AppMacros.h"
 #include "widgets/GravityPicker.h"
+#include "widgets/TickButton.h"
 
 #include "Dashboard.h"
 using namespace cocos2d;
@@ -49,18 +50,34 @@ bool Dashboard::init()
     return true;
 }
 
-void Dashboard::addGravityPicker(std::function<void(Vec2)> callback)
+void Dashboard::addLabel(std::string text)
 {
-    auto label = LABEL("GRAVITY", 28, "Light");
+    auto label = LABEL(text, 28, "Light");
     label->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
     label->setPosition(Vec2(0, _lastPosY));
     this->addChild(label);
     updateLastPosY(label, false);
+}
+
+void Dashboard::addGravityPicker(std::function<void(Vec2)> callback)
+{
     auto picker = GravityPicker::create();
     picker->setAnchorPoint(Vec2::ANCHOR_MIDDLE_TOP);
     picker->setPosition(Vec2(_contentSize.width * 0.5, _lastPosY));
     picker->valueChangedCallback = callback;
     this->addChild(picker);
-    updateLastPosY(picker, true);
+    updateLastPosY(picker);
+}
+
+void Dashboard::addTickButton(std::string text,
+    std::function<void(bool)> callback, bool checked)
+{
+    auto btn = TickButton::create(text, callback);
+    btn->setContentSize(_contentSize);  // The height is ignored automatically
+    btn->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
+    btn->setPosition(Vec2(0, _lastPosY));
+    btn->setTicked(checked);
+    this->addChild(btn);
+    updateLastPosY(btn, false);
 }
 

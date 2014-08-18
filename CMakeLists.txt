@@ -59,6 +59,7 @@ set(GAME_LOGIC_SRC
   Classes/Global.cpp
   Classes/Bricks.cpp
   Classes/widgets/GravityPicker.cpp
+  Classes/widgets/TickButton.cpp
   Classes/widgets/Dashboard.cpp
   Classes/SplashScene.cpp
   Classes/StartupScene.cpp

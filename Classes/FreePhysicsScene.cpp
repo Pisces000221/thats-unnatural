@@ -39,9 +39,19 @@ bool FreePhysics::init(PhysicsWorld *world)
     auto dashboard = Dashboard::create();
     dashboard->setPosition(Vec2(size.width, 0));
     this->addChild(dashboard);
+    dashboard->addLabel("GRAVITY");
     dashboard->addGravityPicker([world](Vec2 gravity) {
         world->setGravity(gravity);
     });
+    dashboard->addLabel("BRICKS");
+    const std::string brick_names[] = { "Balls", "Boxes", "Triangles" };
+    const int brick_names_count = 3;
+    for (int i = 0; i < brick_names_count; i++) {
+        int _i = i;
+        dashboard->addTickButton(brick_names[i], [this, _i](bool b) {
+            CCLOG("%d %s", _i, b ? "Yes" : "No");
+        }, true);
+    }
 
     // Enable touching
     auto listener = EventListenerTouchOneByOne::create();
