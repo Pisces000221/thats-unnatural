@@ -7,6 +7,7 @@ using namespace cocos2d;
 namespace bricks {
 
 const int TAG_COLOURED_PART = 0147106;
+const int BRICK_TYPE_COUNT = 3;
 // http://stackoverflow.com/questions/1231147/is-int-in-c-always-32-bit
 // http://stackoverflow.com/questions/1229131/how-to-declare-a-32-bit-integer-in-c
 typedef int32_t etype;

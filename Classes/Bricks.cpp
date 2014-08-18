@@ -78,26 +78,16 @@ Node *new_rect(float width, float height, PhysicsMaterial material)
 
 Node *new_random(float radius, etype enabled_types, PhysicsMaterial material)
 {
-    if (enabled_types & 7 == 0) enabled_types = FLAG_ALL_ENABLED;
-    while (true) {
-        int r = rand() % 3;
-        switch (r) {
-        case 0:
-            if (enabled_types & (1<<0))
-                return new_circle(radius, material);
-            break;
-        case 1:
-            if (enabled_types & (1<<1))
-                return new_rect(radius * 2, radius * 2, material);
-            break;
-        case 2:
-            if (enabled_types & (1<<2))
-                return new_triangle(radius * SQRT_3, material);
-            break;
-        default:
-            // Never reach this!
-            return nullptr;
-        }
+    if ((enabled_types & ((1 << BRICK_TYPE_COUNT) - 1)) == 0) {
+        enabled_types = FLAG_ALL_ENABLED;
+    }
+    int r = rand() % BRICK_TYPE_COUNT;
+    while (!(enabled_types & (1 << r))) r = rand() % BRICK_TYPE_COUNT;
+    switch (r) {
+        case 0: return new_circle(radius, material);
+        case 1: return new_rect(radius * 2, radius * 2, material);
+        case 2: return new_triangle(radius * SQRT_3, material);
+        default: return nullptr;
     }
 }
 

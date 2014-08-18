@@ -36,10 +36,10 @@ bool FreePhysics::init(PhysicsWorld *world)
         world->setGravity(gravity);
     });
     dashboard->addLabel("BRICKS");
-    const std::string brick_names[] = { "Balls", "Boxes", "Triangles" };
-    const int brick_names_count = 3;
+    const std::string brick_names[bricks::BRICK_TYPE_COUNT]
+        = { "Balls", "Boxes", "Triangles" };
     _enabledBrickTypes = bricks::FLAG_ALL_ENABLED;
-    for (int i = 0; i < brick_names_count; i++) {
+    for (int i = 0; i < bricks::BRICK_TYPE_COUNT; i++) {
         int _i = i;
         dashboard->addTickButton(brick_names[i], [this, _i](bool b) {
             // http://stackoverflow.com/questions/47981
