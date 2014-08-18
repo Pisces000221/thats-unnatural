@@ -8,6 +8,7 @@
 class FreePhysics : public cocos2d::LayerColor
 {
 public:
+    FreePhysics() : _lineTouchCount(0) {}
     virtual bool init(cocos2d::PhysicsWorld *world);
     PHY_CREATE_FUNC(FreePhysics);
     PHY_SCENE_FUNC(FreePhysics);
@@ -21,6 +22,9 @@ protected:
     std::unordered_map<int, Node *> _nails;
 
     bricks::etype _enabledBrickTypes;
+    int _lineTouchCount;    // How many bricks have now reached the line
+    static const int CATEGORY_MASK = 18906416;  // Well, The Three Body Triology...
+    static const int BRICKS_GROUP = 0x1337;     // Keep this positive
 };
 
 #endif

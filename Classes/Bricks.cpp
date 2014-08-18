@@ -6,6 +6,22 @@ using namespace cocos2d;
 
 namespace bricks {
 
+Sprite *purity(float width, float height, Color3B colour)
+{
+    auto s = Sprite::create("images/white_pixel.png");
+    s->setScale(width, height);
+    s->setColor(colour);
+    return s;
+}
+Sprite *purity(Size size, Color3B colour)
+{
+    return purity(size.width, size.height, colour);
+}
+Sprite *purity(float sidelen, Color3B colour)
+{
+    return purity(sidelen, sidelen, colour);
+}
+
 Node *new_circle(float radius, PhysicsMaterial material)
 {
     Node *node = Node::create();
@@ -59,16 +75,11 @@ Node *new_rect(float width, float height, PhysicsMaterial material)
     // Now that segments don't need anti-aliasing, why don't use DrawNode?
     // Well, DrawNode doesn't support auto-batching...
     // T^T  <(Why me?!!!)  <-- DrawNode
-    auto s = Sprite::create("images/white_pixel.png");
+    auto s = purity(width, height, Color3B::BLACK);
     s->setPosition(Vec2(width * 0.5, height * 0.5));
-    s->setScale(width, height);
-    s->setColor(Color3B::BLACK);
     node->addChild(s, 1);
-    s = Sprite::create("images/white_pixel.png");
+    s = purity(width - 4, height - 4, Color3B(128, 128, 255));
     s->setPosition(Vec2(width * 0.5, height * 0.5));
-    s->setScale(width - 4, height - 4);
-    s->setColor(Color3B(128, 128, 255));
-    s->getTexture()->setAntiAliasTexParameters();
     node->addChild(s, 2, TAG_COLOURED_PART);
     PhysicsBody *body = PhysicsBody::createBox(Size(width, height), material);
     node->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
@@ -100,6 +111,20 @@ void set_brick_colour(Node *brick, Color3B colour)
 {
     Node *coloured_part = get_coloured_part(brick);
     if (coloured_part) coloured_part->setColor(colour);
+}
+
+Node *new_sensorline(Vec2 startpos, Vec2 endpos)
+{
+    Node *node = Node::create();
+    Sprite *sprite = purity(startpos.getDistance(endpos), 2, Color3B(255, 0, 0));
+    sprite->setAnchorPoint(Vec2::ANCHOR_MIDDLE_LEFT);
+    sprite->setPosition(startpos);
+    Vec2 delta = endpos - startpos;
+    sprite->setRotation(-atan2(delta.y, delta.x) / M_PI * 180.0);
+    node->addChild(sprite, 1, TAG_COLOURED_PART);
+    PhysicsBody *body = PhysicsBody::createEdgeSegment(startpos, endpos);
+    node->setPhysicsBody(body);
+    return node;
 }
 
 }

@@ -49,12 +49,37 @@ bool FreePhysics::init(PhysicsWorld *world)
         }, _enabledBrickTypes & 1 << _i);
     }
 
+    // A line
+    auto line = bricks::new_sensorline(
+        Vec2(0, size.height * 0.6), Vec2(size.width, size.height * 0.6));
+    line->getPhysicsBody()->setContactTestBitmask(0xFFFFFFFF);
+    line->getPhysicsBody()->setCollisionBitmask(0x0);
+    this->addChild(line);
+
+    // Contact listener
+    // http://www.cnblogs.com/JiaoQing/p/3906780.html
+    // http://childhood.logdown.com/posts/192612/chipmunk-collision-in-detailed-cocos2dx-filter
+    // https://github.com/chukong/cocos-docs/blob/master/manual/framework/native/wiki/physics/zh.md
+    auto contactListener = EventListenerPhysicsContact::create();
+    contactListener->onContactBegin = [this, line](PhysicsContact &contact) {
+        bricks::set_brick_colour(line, Color3B::GREEN);
+        ++_lineTouchCount;
+        return true;
+    };
+    contactListener->onContactSeperate = [this, line](PhysicsContact &contact) {
+        if (--_lineTouchCount == 0) bricks::set_brick_colour(line, Color3B::RED);
+    };
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(contactListener, this);
+
     // Turn on timer
     this->getScheduler()->schedule([this, size](float dt) {
         // Generate a brick with a random shape
         auto obj = bricks::new_random(24, _enabledBrickTypes);
         obj->setPosition(Vec2(size.width * RAND_0_1, size.height + BRICK_INIT_Y_OFFSET));
         obj->getPhysicsBody()->setTag(TAG_DRAGGABLE);
+        obj->getPhysicsBody()->setContactTestBitmask(~CATEGORY_MASK);
+        obj->getPhysicsBody()->setCategoryBitmask(CATEGORY_MASK);
+        obj->getPhysicsBody()->setGroup(BRICKS_GROUP);
         this->addChild(obj);
     }, this, 0.2, false, "FREEPHYSICS_GEN");
 
