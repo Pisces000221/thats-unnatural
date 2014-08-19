@@ -6,6 +6,8 @@
 using namespace cocos2d;
 
 #define TAG_DRAGGABLE 0x80      // Set a body's tag to this to mark it as draggable
+#define TAG_DRAGGING 0x40       // Is dragging this body?
+#define DATA_IGNORED_CONTACT 0x5f3759df // Uh...
 #define BRICK_INIT_Y_OFFSET 30  // A newly generated brick will be height+30 points high
 #define CULLING_BOUND -100      // If a brick's Y position is below this, we say bye bye to it
 
@@ -62,11 +64,21 @@ bool FreePhysics::init(PhysicsWorld *world)
     // https://github.com/chukong/cocos-docs/blob/master/manual/framework/native/wiki/physics/zh.md
     auto contactListener = EventListenerPhysicsContact::create();
     contactListener->onContactBegin = [this, line](PhysicsContact &contact) {
+        // If the brick is being dragged, ignore this
+        //contact.setData((void *)((int)contact.getShapeA() + (int)contact.getShapeB()));
+        //CCLOG("BEGIN 0x%x", contact.getData());
+        if (contact.getShapeA()->getBody()->getTag() & TAG_DRAGGING
+                || contact.getShapeB()->getBody()->getTag() & TAG_DRAGGING) {
+            contact.setData((void *)DATA_IGNORED_CONTACT);
+            return false;
+        }
         bricks::set_brick_colour(line, Color3B::GREEN);
         ++_lineTouchCount;
         return true;
     };
     contactListener->onContactSeperate = [this, line](PhysicsContact &contact) {
+        //CCLOG("SPRTE 0x%x", contact.getData());
+        if ((int)contact.getData() == DATA_IGNORED_CONTACT) return;
         if (--_lineTouchCount == 0) bricks::set_brick_colour(line, Color3B::RED);
     };
     _eventDispatcher->addEventListenerWithSceneGraphPriority(contactListener, this);
@@ -129,6 +141,10 @@ bool FreePhysics::onTouchBegan(Touch* touch, Event* event)
         joint->setMaxForce(5000.0f * body->getMass());
         this->getScene()->getPhysicsWorld()->addJoint(joint);
         _nails.insert(std::make_pair(touch->getID(), nail));
+        // Mark the body as dragging
+        body->setTag(body->getTag() | TAG_DRAGGING);
+        CCLOG("%d", body->getTag());
+        nail->setUserData(body->getNode());
 
         return true;
     } else return false;
@@ -145,6 +161,9 @@ void FreePhysics::onTouchEnded(Touch *touch, Event *event)
     // Remove the released nail
     auto it = _nails.find(touch->getID());
     if (it != _nails.end()) {
+        auto body = (Node *)it->second->getUserData();
+        body->setTag(body->getTag() ^ TAG_DRAGGING);
+        CCLOG("%d", body->getTag());
         this->removeChild(it->second);
         _nails.erase(it);
     }
