@@ -1,3 +1,5 @@
+#include <cstdlib>
+
 #include "AppDelegate.h"
 #include "AppMacros.h"
 #include "SplashScene.h"
@@ -16,6 +18,7 @@ AppDelegate::~AppDelegate()
 }
 
 bool AppDelegate::applicationDidFinishLaunching() {
+    srand((unsigned)::time(NULL));  // Initialize random generator
     // Initialize director
     auto director = Director::getInstance();
     auto glview = director->getOpenGLView();

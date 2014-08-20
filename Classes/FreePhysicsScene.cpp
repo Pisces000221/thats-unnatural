@@ -48,6 +48,7 @@ bool FreePhysics::init(PhysicsWorld *world)
         dashboard->addTickButton(brick_names[i], [this, _i](bool b) {
             // http://stackoverflow.com/questions/47981
             // http://stackoverflow.com/questions/6916974
+            // Set the i-th bit to 0 or 1 depend on b
             if (b) _enabledBrickTypes |= 1 << _i;
             else _enabledBrickTypes &= ~(1 << _i);
         }, _enabledBrickTypes & 1 << _i);
@@ -56,6 +57,7 @@ bool FreePhysics::init(PhysicsWorld *world)
     // A sensor line
     auto line = bricks::new_sensorline(
         Vec2(0, size.height * 0.6), Vec2(size.width, size.height * 0.6));
+    // Doesn't collide with anything, but send contact & seperate messages
     line->getPhysicsBody()->setContactTestBitmask(0xFFFFFFFF);
     line->getPhysicsBody()->setCollisionBitmask(0x0);
     line->getPhysicsBody()->setTag(SENSOR_ID);
@@ -70,7 +72,6 @@ bool FreePhysics::init(PhysicsWorld *world)
     // https://github.com/chukong/cocos-docs/blob/master/manual/framework/native/wiki/physics/zh.md
     auto contactListener = EventListenerPhysicsContact::create();
     contactListener->onContactBegin = [this, line](PhysicsContact &contact) {
-        CCLOG("contact begin");
         indirect_touch::add_arc(
             contact.getShapeA()->getBody()->getTag(),
             contact.getShapeB()->getBody()->getTag());
@@ -92,10 +93,9 @@ bool FreePhysics::init(PhysicsWorld *world)
         // Generate a brick with a random shape
         auto obj = bricks::new_random(24, _enabledBrickTypes);
         obj->setPosition(Vec2(size.width * RAND_0_1, size.height + BRICK_INIT_Y_OFFSET));
-        int tag;
+        int tag;    // Get a tag, either minimum-1 or maximum+1
         if (rand () % 2 && _minID > MIN_BRICK_ID + 1) tag = --_minID; else tag = ++_maxID;
         obj->getPhysicsBody()->setTag(tag);
-        //CCLOG("New ID: %d", tag);
         obj->getPhysicsBody()->setContactTestBitmask(0xFFFFFFFF);
         obj->getPhysicsBody()->setGroup(BRICKS_GROUP);
         this->addChild(obj);
@@ -113,8 +113,9 @@ bool FreePhysics::init(PhysicsWorld *world)
         const Vector<PhysicsBody *> bodies = world->getAllBodies();
         for (auto body: bodies) {
             if (body->getPosition().y < CULLING_BOUND) {
+                // Out of bound. Let's remove this buddy(body)
                 indirect_touch::remove_all_arcs(body->getTag());
-                //CCLOG("Remove ID: %d", body->getTag());
+                // Update minimum and maximum IDs
                 if (body->getTag() == _minID)
                     while (world->getBody(++_minID) == nullptr) {}
                 else if (body->getTag() == _maxID)

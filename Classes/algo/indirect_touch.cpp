@@ -39,13 +39,9 @@ bool calculate()
 
 void add_arc(int i, int j)
 {
-    printf("%d %d\n", i, j); fflush(stdout);
     if (max(i, j) > (int)arcs.size() - 1) arcs.resize(max(i, j) + 1);
-    //printf("push 0"); fflush(stdout);
     arcs[i].push_back(j);
-    //printf("push 1"); fflush(stdout);
     arcs[j].push_back(i);
-    //printf("push 2"); fflush(stdout);
 }
 
 void remove_arc(int i, int j)
