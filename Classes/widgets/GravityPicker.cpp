@@ -8,7 +8,7 @@ using namespace cocos2d;
 #define GP_ORIGIN Vec2(_contentSize.width / 2, _contentSize.height)
 
 GravityPicker::GravityPicker()
-: _thumb(nullptr), valueChangedCallback(nullptr)
+: _thumb(nullptr), _line(nullptr), valueChangedCallback(nullptr)
 { }
 
 bool GravityPicker::init()
@@ -24,6 +24,14 @@ bool GravityPicker::init()
     _thumb->setPosition(GP_ORIGIN - Vec2(0, GP_RADIUS * 0.5));
     this->addChild(_thumb);
 
+    _line = Sprite::create("images/white_pixel.png");
+    _line->setAnchorPoint(Vec2::ANCHOR_MIDDLE_LEFT);
+    _line->setColor(Color3B(255, 192, 64));
+    _line->setPosition(GP_ORIGIN);
+    _line->setScaleX(GP_RADIUS * 0.5);
+    _line->setRotation(90);
+    this->addChild(_line);
+
     auto listener = EventListenerTouchOneByOne::create();
     listener->setSwallowTouches(true);
     listener->onTouchBegan = [this, listener](Touch *touch, Event *event) {
@@ -36,14 +44,17 @@ bool GravityPicker::init()
     };
     listener->onTouchMoved = [this](Touch *touch, Event *event) {
         auto p = this->convertTouchToNodeSpace(touch);
+        double angle = this->getAngle(p);
         if (this->inRange(p) == 1) {
-            double angle = this->getAngle(p);
             p = -Vec2(cos(angle), sin(angle)) * GP_RADIUS + GP_ORIGIN;
         } else if (this->inRange(p) == 2) {
             p.y = GP_RADIUS;
             ENSURE_IN_RANGE(p.x, 0, 2 * GP_RADIUS);
+            angle = p.x > GP_RADIUS ? M_PI : 0;
         }
         _thumb->setPosition(p);
+        _line->setScaleX(GP_ORIGIN.getDistance(p));
+        _line->setRotation(180.0 - angle * 180.0 / M_PI);
         if (valueChangedCallback) {
             valueChangedCallback((p - GP_ORIGIN) / GP_RADIUS * 98.000 * 2);
         }

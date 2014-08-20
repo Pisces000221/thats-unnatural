@@ -14,6 +14,7 @@ public:
 
 protected:
     cocos2d::Sprite *_thumb;
+    cocos2d::Sprite *_line;
     inline int inRange(cocos2d::Vec2 &);    // About the return codes, see the .cpp file
     inline double getAngle(cocos2d::Vec2 &);
 };

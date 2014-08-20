@@ -19,6 +19,8 @@ public:
         std::function<void(bool)>, bool checked = false);
 
 protected:
+    static const float NORM_WIDTH;
+
     bool _shown;    // true if expanded
     float _lastPosY;
     inline void updateLastPosY(cocos2d::Node *newChild, bool splitter = true)

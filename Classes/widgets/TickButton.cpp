@@ -56,6 +56,8 @@ void TickButton::setContentSize(const Size &newSize)
 void TickButton::refreshDisp()
 {
     _bg->runAction(FadeTo::create(0.25, _ticked ? 255 : 96));
-    _tick->runAction(FadeTo::create(0.25, _ticked ? 255 : 0));
+    _tick->runAction(Spawn::create(
+        FadeTo::create(0.2, _ticked ? 255 : 0),
+        ScaleTo::create(0.2, _ticked ? 1 : 0.8), nullptr));
 }
 

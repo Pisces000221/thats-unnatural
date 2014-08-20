@@ -5,18 +5,18 @@
 #include "Dashboard.h"
 using namespace cocos2d;
 
+const float Dashboard::NORM_WIDTH = 0.618034f;
 bool Dashboard::init()
 {
-    if (!LayerColor::initWithColor(Color4B(0, 0, 0, 48))) return false;
+    if (!LayerColor::initWithColor(Color4B(108, 108, 108, 48))) return false;
     auto size = Director::getInstance()->getVisibleSize();
-    this->setContentSize(Size(size.width * 0.5, size.height));
+    this->setContentSize(Size(size.width * NORM_WIDTH, size.height));
     _lastPosY = size.height - 12;
 
     // TODO: Make this code cleaner
     auto btn_show = MenuItemImage::create(
         "images/dashboard_btn.png", "images/dashboard_btn.png",
-        [this](Ref *sender) {
-            CCLOG("oh yeah");
+        [this, size](Ref *sender) {
             // Let's go! Move! Move!!
             this->runAction(EaseSineOut::create(
                 MoveBy::create(0.5, Vec2(-_contentSize.width, 0))
@@ -35,7 +35,7 @@ bool Dashboard::init()
                         DelayTime::create(0.3), FadeIn::create(0.2), nullptr));
                 });
             hider_item->setOpacity(0);
-            hider_item->setScale(_contentSize.width, _contentSize.height);
+            hider_item->setScale(size.width * (1 - NORM_WIDTH), _contentSize.height);
             hider_item->setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
             hider_item->setPosition(Vec2::ZERO);
             hider_menu->addChild(hider_item);
