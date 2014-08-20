@@ -17,17 +17,24 @@ protected:
     bool onTouchBegan(Touch *, Event *);
     void onTouchMoved(Touch *, Event *);
     void onTouchEnded(Touch *, Event *);
+    bool onContactBegin(PhysicsContact &);
+    void onContactSeperate(PhysicsContact &);
+    void lineAttach();
+    void lineDetach();
+    void generateBrick(float);
+    void autoCullBricks(float);
 
     // Stores touches that are not released
     std::unordered_map<int, Node *> _nails;
 
     bricks::etype _enabledBrickTypes;
+    cocos2d::Node *_sensorLine;
     int _lineTouchCount;    // How many bricks have now reached the line
     int _minID, _maxID;     // Smallest and biggest IDs of bricks
+    static const float LINE_DETACH_MAX_TIME;
     static const int SENSOR_ID = 0;
     static const int TRAY_ID = 1;
     static const int MIN_BRICK_ID = 2;
-    static const int CATEGORY_MASK = 18906416;  // Well, The Three Body Triology...
     static const int BRICKS_GROUP = 0x1337;     // Keep this positive
 };
 

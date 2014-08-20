@@ -11,6 +11,13 @@ using namespace cocos2d;
 #define BRICK_INIT_Y_OFFSET 30  // A newly generated brick will be height+30 points high
 #define CULLING_BOUND -100      // If a brick's Y position is below this, we say bye bye to it
 
+#define DASHBOARD_ZORDER 18906416   // This guy is a super fan of The Three Body Triology.
+#define STATIC_BODY_ZORDER 1
+#define BRICKS_ZORDER 2
+// Allow 0.3 second of detaching of the sensor line
+// That is, if the bricks seperated for 0.2s, the line will still be green
+const float FreePhysics::LINE_DETACH_MAX_TIME = 0.3f;
+
 bool FreePhysics::init(PhysicsWorld *world)
 {
     if (!LayerColor::initWithColor(Color4B::WHITE)) return false;
@@ -27,14 +34,14 @@ bool FreePhysics::init(PhysicsWorld *world)
     tray_node->setScale(200, 20);
     tray_node->setColor(Color3B::YELLOW);
     tray_node->setPhysicsBody(tray_body);
-    this->addChild(tray_node);
+    this->addChild(tray_node, STATIC_BODY_ZORDER);
 
     CCLOG("Default gravity: (%.5f, %.5f)", world->getGravity().x, world->getGravity().y);
 
     // The dashboard
     auto dashboard = Dashboard::create();
     dashboard->setPosition(Vec2(size.width, 0));
-    this->addChild(dashboard);
+    this->addChild(dashboard, DASHBOARD_ZORDER);
     dashboard->addLabel("GRAVITY");
     dashboard->addGravityPicker([world](Vec2 gravity) {
         world->setGravity(gravity);
@@ -55,13 +62,13 @@ bool FreePhysics::init(PhysicsWorld *world)
     }
 
     // A sensor line
-    auto line = bricks::new_sensorline(
+    _sensorLine = bricks::new_sensorline(
         Vec2(0, size.height * 0.6), Vec2(size.width, size.height * 0.6));
     // Doesn't collide with anything, but send contact & seperate messages
-    line->getPhysicsBody()->setContactTestBitmask(0xFFFFFFFF);
-    line->getPhysicsBody()->setCollisionBitmask(0x0);
-    line->getPhysicsBody()->setTag(SENSOR_ID);
-    this->addChild(line);
+    _sensorLine->getPhysicsBody()->setContactTestBitmask(0xFFFFFFFF);
+    _sensorLine->getPhysicsBody()->setCollisionBitmask(0x0);
+    _sensorLine->getPhysicsBody()->setTag(SENSOR_ID);
+    this->addChild(_sensorLine, STATIC_BODY_ZORDER);
 
     indirect_touch::init();
     indirect_touch::start = TRAY_ID;
@@ -71,35 +78,14 @@ bool FreePhysics::init(PhysicsWorld *world)
     // http://childhood.logdown.com/posts/192612/chipmunk-collision-in-detailed-cocos2dx-filter
     // https://github.com/chukong/cocos-docs/blob/master/manual/framework/native/wiki/physics/zh.md
     auto contactListener = EventListenerPhysicsContact::create();
-    contactListener->onContactBegin = [this, line](PhysicsContact &contact) {
-        indirect_touch::add_arc(
-            contact.getShapeA()->getBody()->getTag(),
-            contact.getShapeB()->getBody()->getTag());
-        bricks::set_brick_colour(line,
-            indirect_touch::calculate() ? Color3B::GREEN : Color3B::RED);
-        return true;
-    };
-    contactListener->onContactSeperate = [this, line](PhysicsContact &contact) {
-        indirect_touch::remove_arc(
-            contact.getShapeA()->getBody()->getTag(),
-            contact.getShapeB()->getBody()->getTag());
-        bricks::set_brick_colour(line,
-            indirect_touch::calculate() ? Color3B::GREEN : Color3B::RED);
-    };
+    contactListener->onContactBegin = CC_CALLBACK_1(FreePhysics::onContactBegin, this);
+    contactListener->onContactSeperate = CC_CALLBACK_1(FreePhysics::onContactSeperate, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(contactListener, this);
 
     // Turn on timer
-    this->getScheduler()->schedule([this, size](float dt) {
-        // Generate a brick with a random shape
-        auto obj = bricks::new_random(24, _enabledBrickTypes);
-        obj->setPosition(Vec2(size.width * RAND_0_1, size.height + BRICK_INIT_Y_OFFSET));
-        int tag;    // Get a tag, either minimum-1 or maximum+1
-        if (rand () % 2 && _minID > MIN_BRICK_ID + 1) tag = --_minID; else tag = ++_maxID;
-        obj->getPhysicsBody()->setTag(tag);
-        obj->getPhysicsBody()->setContactTestBitmask(0xFFFFFFFF);
-        obj->getPhysicsBody()->setGroup(BRICKS_GROUP);
-        this->addChild(obj);
-    }, this, 0.2, false, "FREEPHYSICS_GEN");
+    this->getScheduler()->schedule(
+        CC_CALLBACK_1(FreePhysics::generateBrick, this),
+        this, 0.2, false, "FREEPHYSICS_GEN");
 
     // Enable touching
     auto listener = EventListenerTouchOneByOne::create();
@@ -109,21 +95,9 @@ bool FreePhysics::init(PhysicsWorld *world)
     _eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
 
     // Auto-culling for bodies
-    this->getScheduler()->schedule([this, world](float dt) {
-        const Vector<PhysicsBody *> bodies = world->getAllBodies();
-        for (auto body: bodies) {
-            if (body->getPosition().y < CULLING_BOUND) {
-                // Out of bound. Let's remove this buddy(body)
-                indirect_touch::remove_all_arcs(body->getTag());
-                // Update minimum and maximum IDs
-                if (body->getTag() == _minID)
-                    while (world->getBody(++_minID) == nullptr) {}
-                else if (body->getTag() == _maxID)
-                    while (world->getBody(--_maxID) == nullptr) {}
-                world->removeBody(body);
-            }
-        }
-    }, this, 0.1, false, "BODIES_AUTO_CULLING");
+    this->getScheduler()->schedule(
+        CC_CALLBACK_1(FreePhysics::autoCullBricks, this),
+        this, 0.1, false, "BODIES_AUTO_CULLING");
 
     return true;
 }
@@ -174,6 +148,72 @@ void FreePhysics::onTouchEnded(Touch *touch, Event *event)
     if (it != _nails.end()) {
         this->removeChild(it->second);
         _nails.erase(it);
+    }
+}
+
+// Contact-related
+bool FreePhysics::onContactBegin(PhysicsContact &contact)
+{
+    indirect_touch::add_arc(
+        contact.getShapeA()->getBody()->getTag(),
+        contact.getShapeB()->getBody()->getTag());
+    if (indirect_touch::calculate()) lineAttach();
+    return true;
+}
+
+void FreePhysics::onContactSeperate(PhysicsContact &contact)
+{
+    indirect_touch::remove_arc(
+        contact.getShapeA()->getBody()->getTag(),
+        contact.getShapeB()->getBody()->getTag());
+    if (!indirect_touch::calculate()) lineDetach();
+}
+
+void FreePhysics::lineAttach()
+{
+    this->getScheduler()->unschedule("LINE_DETACH", this);
+    bricks::set_brick_colour(_sensorLine, Color3B::GREEN);
+}
+
+void FreePhysics::lineDetach()
+{
+    if (this->getScheduler()->isScheduled("LINE_DETACH", this)) return;
+    this->getScheduler()->schedule([this](float dt) {
+        this->getScheduler()->unschedule("LINE_DETACH", this);
+        bricks::set_brick_colour(_sensorLine, Color3B::RED);
+    }, this, 0, kRepeatForever, LINE_DETACH_MAX_TIME, false, "LINE_DETACH"); 
+}
+
+// Operations of bricks
+void FreePhysics::generateBrick(float dt)
+{
+    auto size = Director::getInstance()->getVisibleSize();
+    // Generate a brick with a random shape
+    auto obj = bricks::new_random(24, _enabledBrickTypes);
+    obj->setPosition(Vec2(size.width * RAND_0_1, size.height + BRICK_INIT_Y_OFFSET));
+    int id;     // Get an ID, either minimum-1 or maximum+1
+    if (rand () % 2 && _minID > MIN_BRICK_ID + 1) id = --_minID; else id = ++_maxID;
+    obj->getPhysicsBody()->setTag(id);
+    obj->getPhysicsBody()->setContactTestBitmask(0xFFFFFFFF);
+    obj->getPhysicsBody()->setGroup(BRICKS_GROUP);
+    this->addChild(obj, BRICKS_ZORDER);
+}
+
+void FreePhysics::autoCullBricks(float dt)
+{
+    auto world = this->getScene()->getPhysicsWorld();
+    const Vector<PhysicsBody *> bodies = world->getAllBodies();
+    for (auto body: bodies) {
+        if (body->getPosition().y < CULLING_BOUND) {
+            // Out of bound. Let's remove this buddy(body)
+            indirect_touch::remove_all_arcs(body->getTag());
+            // Update minimum and maximum IDs
+            if (body->getTag() == _minID)
+                while (world->getBody(++_minID) == nullptr) {}
+            else if (body->getTag() == _maxID)
+                while (world->getBody(--_maxID) == nullptr) {}
+            world->removeBody(body);
+        }
     }
 }
 
