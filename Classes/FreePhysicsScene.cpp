@@ -190,6 +190,7 @@ void FreePhysics::generateBrick(float dt)
     auto size = Director::getInstance()->getVisibleSize();
     // Generate a brick with a random shape
     auto obj = bricks::new_random(24, _enabledBrickTypes);
+    if (obj == nullptr) return;     // All types are turned off, see dashboard
     obj->setPosition(Vec2(size.width * RAND_0_1, size.height + BRICK_INIT_Y_OFFSET));
     int id;     // Get an ID, either minimum-1 or maximum+1
     if (rand () % 2 && _minID > MIN_BRICK_ID + 1) id = --_minID; else id = ++_maxID;

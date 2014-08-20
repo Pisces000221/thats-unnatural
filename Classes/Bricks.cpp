@@ -89,9 +89,8 @@ Node *new_rect(float width, float height, PhysicsMaterial material)
 
 Node *new_random(float radius, etype enabled_types, PhysicsMaterial material)
 {
-    if ((enabled_types & ((1 << BRICK_TYPE_COUNT) - 1)) == 0) {
-        enabled_types = FLAG_ALL_ENABLED;
-    }
+    // If none of the types available is marked enabled, just return nullptr
+    if ((enabled_types & ((1 << BRICK_TYPE_COUNT) - 1)) == 0) return nullptr;
     int r = rand() % BRICK_TYPE_COUNT;
     while (!(enabled_types & (1 << r))) r = rand() % BRICK_TYPE_COUNT;
     switch (r) {
