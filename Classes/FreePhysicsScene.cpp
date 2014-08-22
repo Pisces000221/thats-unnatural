@@ -154,10 +154,16 @@ void FreePhysics::onTouchEnded(Touch *touch, Event *event)
 // Contact-related
 bool FreePhysics::onContactBegin(PhysicsContact &contact)
 {
+    // Tell i_t that they collided and calculate
     indirect_touch::add_arc(
         contact.getShapeA()->getBody()->getTag(),
         contact.getShapeB()->getBody()->getTag());
     if (indirect_touch::calculate()) lineAttach();
+    // Is the tray being hit?
+    if (contact.getShapeA()->getBody()->getTag() == TRAY_ID
+            || contact.getShapeB()->getBody()->getTag() == TRAY_ID) {
+        trayHit(contact.getShapeA()->getBody(), contact.getShapeB()->getBody());
+    }
     return true;
 }
 
@@ -184,6 +190,18 @@ void FreePhysics::lineDetach()
     }, this, 0, kRepeatForever, LINE_DETACH_MAX_TIME, false, "LINE_DETACH"); 
 }
 
+void FreePhysics::trayHit(PhysicsBody *a, PhysicsBody *b)
+{
+    // One of a and b is the tray, we ensure a is the tray
+    if (b->getTag() == TRAY_ID) {
+        auto t = a; a = b; b = t;
+    }
+    if (_moistenedIDs.find(b->getTag()) == _moistenedIDs.end()) {
+        _moistenedIDs.insert(b->getTag());
+        bricks::set_brick_colour(b->getNode(), Color3B::YELLOW);
+    }
+}
+
 // Operations of bricks
 void FreePhysics::generateBrick(float dt)
 {
@@ -208,13 +226,15 @@ void FreePhysics::autoCullBricks(float dt)
         if (body->getPosition().y < CULLING_BOUND) {
             // Out of bound. Let's remove this buddy(body)
             indirect_touch::remove_all_arcs(body->getTag());
+            _moistenedIDs.erase(body->getTag());
             // Update minimum and maximum IDs
             if (body->getTag() == _minID)
-                while (world->getBody(++_minID) == nullptr) {}
-            else if (body->getTag() == _maxID)
-                while (world->getBody(--_maxID) == nullptr) {}
+                while (world->getBody(++_minID) == nullptr && _minID < _maxID) {}
+            if (body->getTag() == _maxID)
+                while (world->getBody(--_maxID) == nullptr && _maxID >= MIN_BRICK_ID) {}
             world->removeBody(body);
         }
     }
+    if (MIN_BRICK_ID > _maxID) { _minID = MIN_BRICK_ID; _maxID = MIN_BRICK_ID - 1; }
 }
 
