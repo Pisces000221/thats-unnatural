@@ -3,8 +3,8 @@
 
 #include "cocos2d.h"
 #include <functional>
+#include "AppMacros.h"
 
-#define EXEC_CALLBACK if (_callback) _callback(_val)
 class Slider : public cocos2d::Node
 {
 public:
@@ -12,7 +12,8 @@ public:
     typedef std::function<void(float)> callback_type;
     virtual bool init(float, float, callback_type);
     virtual void setContentSize(const cocos2d::Size &) override;
-    void setValue(float val) { _val = val; refreshDisp(); EXEC_CALLBACK; }
+    void setValue(const float);
+    void setValueByRate(const float r) { setValue(_minval + r * (_maxval - _minval)); }
     float getValue() { return _val; }
     static Slider *create(float, float, callback_type);
 
@@ -28,7 +29,6 @@ protected:
     void onTouchEnded(cocos2d::Touch *, cocos2d::Event *);
     void refreshDisp();
 };
-#undef EXEC_CALLBACK
 
 #endif
 
