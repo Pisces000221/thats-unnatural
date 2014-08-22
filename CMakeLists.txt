@@ -61,6 +61,7 @@ set(GAME_LOGIC_SRC
   Classes/algo/indirect_touch.cpp
   Classes/widgets/GravityPicker.cpp
   Classes/widgets/TickButton.cpp
+  Classes/widgets/Slider.cpp
   Classes/widgets/Dashboard.cpp
   Classes/SplashScene.cpp
   Classes/StartupScene.cpp

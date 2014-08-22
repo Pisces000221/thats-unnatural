@@ -60,6 +60,11 @@ bool FreePhysics::init(PhysicsWorld *world)
             else _enabledBrickTypes &= ~(1 << _i);
         }, _enabledBrickTypes & 1 << _i);
     }
+    dashboard->addSplitter();
+    dashboard->addLabel("BRICKS PER SECOND");
+    dashboard->addSlider(2, 20, 5, [](float val) {
+        CCLOG("%f", val);
+    });
 
     // A sensor line
     _sensorLine = bricks::new_sensorline(

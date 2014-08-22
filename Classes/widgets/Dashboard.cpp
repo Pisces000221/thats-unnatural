@@ -1,6 +1,7 @@
 #include "AppMacros.h"
 #include "widgets/GravityPicker.h"
 #include "widgets/TickButton.h"
+#include "widgets/Slider.h"
 
 #include "Dashboard.h"
 using namespace cocos2d;
@@ -79,5 +80,17 @@ void Dashboard::addTickButton(std::string text,
     btn->setTicked(checked);
     this->addChild(btn);
     updateLastPosY(btn, false);
+}
+
+// Pass -1 to val keeps the slider at minimum value
+void Dashboard::addSlider(float min, float max, float val,
+    std::function<void(float)> callback)
+{
+    auto slider = Slider::create(min, max, callback);
+    slider->setAnchorPoint(Vec2::ANCHOR_MIDDLE_TOP);
+    slider->setPosition(Vec2(_contentSize.width * 0.5, _lastPosY));
+    if (val != -1.f) slider->setValue(val);
+    this->addChild(slider);
+    updateLastPosY(slider);
 }
 

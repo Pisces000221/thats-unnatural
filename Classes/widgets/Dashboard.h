@@ -13,10 +13,12 @@ public:
     virtual bool init() override;
     CREATE_FUNC(Dashboard);
 
+    void addSplitter() { _lastPosY -= 24; }
     void addLabel(std::string text);
     void addGravityPicker(std::function<void(cocos2d::Vec2)>);
     void addTickButton(std::string,
         std::function<void(bool)>, bool checked = false);
+    void addSlider(float, float, float, std::function<void(float)>);
 
 protected:
     static const float NORM_WIDTH;
