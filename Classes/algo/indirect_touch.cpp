@@ -30,6 +30,7 @@ void indirect_touch_dfs(int idx)
 
 bool calculate()
 {
+    if (arcs.size() == 0) return false;
     visited.clear();
     visited.resize(arcs.size());
     found = false;
@@ -46,6 +47,7 @@ void add_arc(int i, int j)
 
 void remove_arc(int i, int j)
 {
+    if (max(i, j) > (int)arcs.size() - 1) return;
     auto p = find(arcs[i].begin(), arcs[i].end(), j);
     if (p != arcs[i].end()) arcs[i].erase(p);
     p = find(arcs[j].begin(), arcs[j].end(), i);
