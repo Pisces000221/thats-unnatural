@@ -83,10 +83,10 @@ void Dashboard::addTickButton(std::string text,
 }
 
 // Pass -1 to val keeps the slider at minimum value
-void Dashboard::addSlider(float min, float max, float val,
+void Dashboard::addSlider(float min, float max, float val, float increment,
     std::function<void(float)> callback)
 {
-    auto slider = Slider::create(min, max, callback);
+    auto slider = Slider::create(min, max, increment, callback);
     slider->setAnchorPoint(Vec2::ANCHOR_MIDDLE_TOP);
     slider->setPosition(Vec2(_contentSize.width * 0.5, _lastPosY));
     if (val != -1.f) slider->setValue(val);

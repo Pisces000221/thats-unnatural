@@ -10,7 +10,7 @@
 class FreePhysics : public cocos2d::LayerColor
 {
 public:
-    FreePhysics() : _lineTouchCount(0),
+    FreePhysics() : _timeTillBrickGen(0), _lineTouchCount(0),
         _minID(MIN_BRICK_ID), _maxID(MIN_BRICK_ID - 1) {}
     virtual bool init(cocos2d::PhysicsWorld *world);
     PHY_CREATE_FUNC(FreePhysics);
@@ -27,6 +27,7 @@ protected:
     void trayHit(PhysicsBody *, PhysicsBody *);
     void generateBrick(float);
     void autoCullBricks(float);
+    float _timeTillBrickGen;
 
     // Stores touches that are not released
     std::unordered_map<int, Node *> _nails;

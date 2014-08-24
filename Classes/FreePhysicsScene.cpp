@@ -61,8 +61,8 @@ bool FreePhysics::init(PhysicsWorld *world)
         }, _enabledBrickTypes & 1 << _i);
     }
     dashboard->addSplitter();
-    dashboard->addLabel("BRICKS PER SECOND");
-    dashboard->addSlider(2, 20, 5, [](float val) {
+    dashboard->addLabel("BRICKS/SEC");
+    dashboard->addSlider(0.5, 10, 5, 0.5, [this](float val) {
         CCLOG("%f", val);
     });
 

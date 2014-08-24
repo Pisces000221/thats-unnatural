@@ -3,17 +3,25 @@
 #include "cocos2d.h"
 using namespace cocos2d;
 
-Slider *Slider::create(float min, float max, callback_type callback)
+Slider *Slider::create(float min, float max, float increment, callback_type callback)
 {
     Slider *ret = new Slider();
-    if (ret && ret->init(min, max, callback)) return ret;
+    if (ret && ret->init(min, max, increment, callback)) return ret;
     else { CC_SAFE_DELETE(ret); ret = nullptr; return nullptr; }
 }
 
-bool Slider::init(float min, float max, callback_type callback)
+bool Slider::init(float min, float max, float increment, callback_type callback)
 {
     if (!Node::init()) return false;
-    _val = _minval = min; _maxval = max; _callback = callback;
+    _val = _minval = min; _maxval = max; _increment = increment;
+    _callback = callback;
+    // Calculate number format, currently only decimal precision supported
+    int digits = 0;
+    // Use increment as a temporary variable
+    while (fabs((int)increment - increment) / _increment > 1e-5) {
+        increment *= 10.; ++digits;
+    }
+    _num_format = new char[10]; sprintf(_num_format, "%%.%df", digits);
 
     _bar = Sprite::create("images/slider_bar.png");
     _bar->setNormalizedPosition(Vec2(0.5, 0));
@@ -74,6 +82,8 @@ void Slider::setValue(float val)
 
 bool Slider::onTouchBegan(Touch *touch, Event *event)
 {
+    if (!Rect(0, 0, _contentSize.width, _contentSize.height)
+        .containsPoint(this->convertTouchToNodeSpace(touch))) return false;
     this->onTouchMoved(touch, event);
     return true;
 }
@@ -93,7 +103,7 @@ void Slider::refreshDisp()
     float r = (_val - _minval) / (_maxval - _minval);
     _thumb->setPositionX(r * _contentSize.width);
     _ptbar->setPercentage(r * 100.f);
-    char s[5]; sprintf(s, "%d", (int)_val);
+    char s[5]; sprintf(s, _num_format, _val);
     _label->setString(s);
 }
 

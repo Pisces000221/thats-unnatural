@@ -18,7 +18,7 @@ public:
     void addGravityPicker(std::function<void(cocos2d::Vec2)>);
     void addTickButton(std::string,
         std::function<void(bool)>, bool checked = false);
-    void addSlider(float, float, float, std::function<void(float)>);
+    void addSlider(float, float, float, float, std::function<void(float)>);
 
 protected:
     static const float NORM_WIDTH;
