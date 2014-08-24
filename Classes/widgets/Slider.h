@@ -25,6 +25,7 @@ protected:
     cocos2d::Sprite *_bar, *_thumb;
     cocos2d::ProgressTimer *_ptbar;
     cocos2d::Label *_label;
+    cocos2d::Rect _validTouchRect;
 
     bool onTouchBegan(cocos2d::Touch *, cocos2d::Event *);
     void onTouchMoved(cocos2d::Touch *, cocos2d::Event *);

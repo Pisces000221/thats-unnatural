@@ -63,7 +63,7 @@ bool FreePhysics::init(PhysicsWorld *world)
     dashboard->addSplitter();
     dashboard->addLabel("BRICKS/SEC");
     dashboard->addSlider(0.5, 10, 5, 0.5, [this](float val) {
-        CCLOG("%f", val);
+        _timeBtwnBrickGen = 1. / val;
     });
 
     // A sensor line
@@ -88,9 +88,12 @@ bool FreePhysics::init(PhysicsWorld *world)
     _eventDispatcher->addEventListenerWithSceneGraphPriority(contactListener, this);
 
     // Turn on timer
-    this->getScheduler()->schedule(
-        CC_CALLBACK_1(FreePhysics::generateBrick, this),
-        this, 0.2, false, "FREEPHYSICS_GEN");
+    this->getScheduler()->schedule([this](float dt) {
+        if ((_timeSinceLastBrickGen += dt) > _timeBtwnBrickGen) {
+            _timeSinceLastBrickGen -= _timeBtwnBrickGen;
+            this->generateBrick();
+        }
+    }, this, 0, false, "FREEPHYSICS_GEN");
 
     // Enable touching
     auto listener = EventListenerTouchOneByOne::create();
@@ -208,7 +211,7 @@ void FreePhysics::trayHit(PhysicsBody *a, PhysicsBody *b)
 }
 
 // Operations of bricks
-void FreePhysics::generateBrick(float dt)
+void FreePhysics::generateBrick()
 {
     auto size = Director::getInstance()->getVisibleSize();
     // Generate a brick with a random shape

@@ -63,12 +63,13 @@ bool Slider::init(float min, float max, float increment, callback_type callback)
 
 void Slider::setContentSize(const Size &newSize)
 {
-    //CCLOG("%f x %f", newSize.width, newSize.height);
     float w = _bar->getContentSize().width;
-    float h = _bar->getContentSize().height;
+    float h = _thumb->getContentSize().height * _thumb->getScaleY();
     Node::setContentSize(Size(newSize.width, h));
     _bar->setScaleX(newSize.width / w);
     _ptbar->setScaleX(newSize.width / w);
+    _validTouchRect.origin = Vec2(0, -_thumb->getContentSize().height);
+    _validTouchRect.size = Size(newSize.width, h);
     refreshDisp();
 }
 
@@ -80,10 +81,12 @@ void Slider::setValue(float val)
     if (_callback) _callback(_val);
 }
 
+// TODO: Move this to AppMacros.h or (new file) Logging.h
+#define LOGPOINT(__p__) CCLOG("(%.2f, %.2f)", (__p__).x, (__p__).y)
 bool Slider::onTouchBegan(Touch *touch, Event *event)
 {
-    if (!Rect(0, 0, _contentSize.width, _contentSize.height)
-        .containsPoint(this->convertTouchToNodeSpace(touch))) return false;
+    if (!_validTouchRect.containsPoint(convertTouchToNodeSpace(touch)))
+        return false;
     this->onTouchMoved(touch, event);
     return true;
 }
