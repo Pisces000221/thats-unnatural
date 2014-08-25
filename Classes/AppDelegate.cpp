@@ -1,6 +1,7 @@
 #include <cstdlib>
 
 #include "AppDelegate.h"
+#include "data/level_reader.h"
 #include "AppMacros.h"
 #include "SplashScene.h"
 using namespace cocos2d;
@@ -29,6 +30,10 @@ bool AppDelegate::applicationDidFinishLaunching() {
     glview->setDesignResolutionSize(320, 480, ResolutionPolicy::FIXED_WIDTH);
     director->setDisplayStats(true);
     director->setAnimationInterval(1.0 / 60);
+
+    // Initialize level reader
+    level_reader::init();
+    level_reader::read_all();
 
     // Create a scene
     auto scene = Splash::createScene();

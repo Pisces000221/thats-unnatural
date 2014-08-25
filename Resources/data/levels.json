@@ -1,0 +1,4 @@
+[
+    { "id": 1, "objective": "min_height", "arg": 0.4, "brick_types": ["boxes"] },
+    { "id": 2, "objective": "max_hitbricks", "arg": 30, "brick_types": ["rects", "balls"] }
+]

@@ -1,5 +1,6 @@
 #include "AppMacros.h"
 #include "Bricks.h"
+#include "data/level_reader.h"
 
 #include "LevelListScene.h"
 using namespace cocos2d;
@@ -52,6 +53,7 @@ bool LevelList::init(PhysicsWorld *world)
         auto lbl_level = LABEL(s, 32, "Light");
         lbl_level->setNormalizedPosition(Vec2::ANCHOR_MIDDLE);
         brk_level->addChild(lbl_level, 10); // Keep the number on the top
+        brk_level->setTag(i + TAG_LEVEL_0);
         _frontLayer->addChild(brk_level);
     }
 
@@ -74,6 +76,7 @@ bool LevelList::onTouchBegan(Touch* touch, Event* event)
 
     PhysicsBody *body = arr.at(0)->getBody();
     _selectedNode = bricks::get_coloured_part(body->getNode());
+    _selectedLevel = body->getNode()->getTag() - TAG_LEVEL_0 + 1;
     _lastColour = _selectedNode->getColor();
     _selectedNode->runAction(TintTo::create(0.3, LIGHTEN(_lastColour)));
     return true;
@@ -95,6 +98,7 @@ void LevelList::onTouchMoved(Touch *touch, Event *event)
 void LevelList::onTouchEnded(Touch *touch, Event *event)
 {
     this->resetSelected();
+    if (!_dragStarted) enterLevel(_selectedLevel);
     _dragStarted = false;
 }
 
@@ -105,5 +109,10 @@ void LevelList::resetSelected()
             _lastColour.r, _lastColour.g, _lastColour.b));
         _selectedNode = nullptr;
     }
+}
+
+void LevelList::enterLevel(int id)
+{
+    CCLOG("Enter level %d", id);
 }
 

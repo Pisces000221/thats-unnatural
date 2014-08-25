@@ -59,6 +59,7 @@ set(GAME_LOGIC_SRC
   Classes/Global.cpp
   Classes/Bricks.cpp
   Classes/algo/indirect_touch.cpp
+  Classes/data/level_reader.cpp
   Classes/widgets/GravityPicker.cpp
   Classes/widgets/TickButton.cpp
   Classes/widgets/Slider.cpp

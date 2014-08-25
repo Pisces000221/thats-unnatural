@@ -22,11 +22,15 @@ protected:
     void onTouchMoved(Touch *, Event *);
     void onTouchEnded(Touch *, Event *);
     void resetSelected();           // Reset the colour of the selected brick
+    void enterLevel(int);
 
     cocos2d::Node *_selectedNode;   // Selected brick (tapped but not released)
+    int _selectedLevel;             // Selected level number (starts from 1)
     cocos2d::Color3B _lastColour;   // The initial colour of the selected brick
     bool _dragStarted;
     float _dragStartPosY;
+    
+    static const int TAG_LEVEL_0 = 0xC0C052D;
 };
 
 #endif
