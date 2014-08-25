@@ -15,6 +15,7 @@ LOCAL_SRC_FILES := unnatural/main.cpp \
                    ../../Classes/Global.cpp \
                    ../../Classes/Bricks.cpp \
                    ../../Classes/algo/indirect_touch.cpp \
+                   ../../Classes/data/level_reader.cpp \
                    ../../Classes/widgets/GravityPicker.cpp \
                    ../../Classes/widgets/TickButton.cpp \
                    ../../Classes/widgets/Slider.cpp \
@@ -22,9 +23,11 @@ LOCAL_SRC_FILES := unnatural/main.cpp \
                    ../../Classes/SplashScene.cpp \
                    ../../Classes/StartupScene.cpp \
                    ../../Classes/LevelListScene.cpp \
-                   ../../Classes/FreePhysicsScene.cpp
+                   ../../Classes/FreePhysicsScene.cpp \
+                   ../../Classes/LevelPlayScene.cpp
 
-LOCAL_C_INCLUDES := $(LOCAL_PATH)/../../Classes
+LOCAL_C_INCLUDES := $(LOCAL_PATH)/../../Classes \
+                    $(LOCAL_PATH)/../../cocos2d/external
 
 LOCAL_WHOLE_STATIC_LIBRARIES := cocos2dx_static
 LOCAL_WHOLE_STATIC_LIBRARIES += cocosdenshion_static
