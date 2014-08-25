@@ -21,6 +21,10 @@ public:
 
 protected:
     level_reader::level _level;
+    virtual void trayHit(PhysicsBody *, PhysicsBody *) override;
+
+    cocos2d::Label *_lbl_count;
+    int _count; // For recording the hits
 };
 
 #endif

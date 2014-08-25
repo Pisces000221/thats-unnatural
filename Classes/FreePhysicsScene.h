@@ -11,7 +11,8 @@ class FreePhysics : public cocos2d::LayerColor
 {
 public:
     FreePhysics() : _timeSinceLastBrickGen(0), _timeBtwnBrickGen(0),
-        _lineTouchCount(0), _minID(MIN_BRICK_ID), _maxID(MIN_BRICK_ID - 1) {}
+        _lineTouchCount(0), _minID(MIN_BRICK_ID), _maxID(MIN_BRICK_ID - 1),
+        _useSensor(true), _useMoistening(true) {}
     virtual bool init(cocos2d::PhysicsWorld *world);
     PHY_CREATE_FUNC(FreePhysics);
     PHY_SCENE_FUNC(FreePhysics);
@@ -22,9 +23,9 @@ protected:
     void onTouchEnded(Touch *, Event *);
     bool onContactBegin(PhysicsContact &);
     void onContactSeperate(PhysicsContact &);
-    void lineAttach();
-    void lineDetach();
-    void trayHit(PhysicsBody *, PhysicsBody *);
+    virtual void lineAttach();
+    virtual void lineDetach();
+    virtual void trayHit(PhysicsBody *, PhysicsBody *);
     void generateBrick();
     void autoCullBricks(float);
     float _timeSinceLastBrickGen, _timeBtwnBrickGen;
@@ -44,6 +45,12 @@ protected:
     static const int MIN_BRICK_ID = 2;
     static const int BRICKS_GROUP = 0x1337;     // Keep this positive
     static const int TAG_DASHBOARD = 0X0FE21F;  // What??? Firefox?
+
+    // Settings by LevelPlay
+    bool _useSensor;
+    bool _useMoistening;
+    // Info used by LevelPlay
+    bool _newBrickMoistened;
 };
 
 #endif

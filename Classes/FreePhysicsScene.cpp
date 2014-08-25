@@ -67,8 +67,8 @@ bool FreePhysics::init(PhysicsWorld *world)
     });
 
     // A sensor line
-    _sensorLine = bricks::new_sensorline(
-        Vec2(0, size.height * 0.6), Vec2(size.width, size.height * 0.6));
+    _sensorLine = bricks::new_sensorline(Vec2(0, 0), Vec2(size.width, 0));
+    _sensorLine->setPositionY(size.height * 0.6);
     // Doesn't collide with anything, but send contact & seperate messages
     _sensorLine->getPhysicsBody()->setContactTestBitmask(0xFFFFFFFF);
     _sensorLine->getPhysicsBody()->setCollisionBitmask(0x0);
@@ -162,14 +162,17 @@ void FreePhysics::onTouchEnded(Touch *touch, Event *event)
 // Contact-related
 bool FreePhysics::onContactBegin(PhysicsContact &contact)
 {
-    // Tell i_t that they collided and calculate
-    indirect_touch::add_arc(
-        contact.getShapeA()->getBody()->getTag(),
-        contact.getShapeB()->getBody()->getTag());
-    if (indirect_touch::calculate()) lineAttach();
+    if (_useSensor) {
+        // Tell i_t that they collided and calculate
+        indirect_touch::add_arc(
+            contact.getShapeA()->getBody()->getTag(),
+            contact.getShapeB()->getBody()->getTag());
+        if (indirect_touch::calculate()) lineAttach();
+    }
     // Is the tray being hit?
-    if (contact.getShapeA()->getBody()->getTag() == TRAY_ID
-            || contact.getShapeB()->getBody()->getTag() == TRAY_ID) {
+    if (_useMoistening &&
+            (contact.getShapeA()->getBody()->getTag() == TRAY_ID
+            || contact.getShapeB()->getBody()->getTag() == TRAY_ID)) {
         trayHit(contact.getShapeA()->getBody(), contact.getShapeB()->getBody());
     }
     return true;
@@ -177,10 +180,12 @@ bool FreePhysics::onContactBegin(PhysicsContact &contact)
 
 void FreePhysics::onContactSeperate(PhysicsContact &contact)
 {
-    indirect_touch::remove_arc(
-        contact.getShapeA()->getBody()->getTag(),
-        contact.getShapeB()->getBody()->getTag());
-    if (!indirect_touch::calculate()) lineDetach();
+    if (_useSensor) {
+        indirect_touch::remove_arc(
+            contact.getShapeA()->getBody()->getTag(),
+            contact.getShapeB()->getBody()->getTag());
+        if (!indirect_touch::calculate()) lineDetach();
+    }
 }
 
 void FreePhysics::lineAttach()
@@ -204,7 +209,8 @@ void FreePhysics::trayHit(PhysicsBody *a, PhysicsBody *b)
     if (b->getTag() == TRAY_ID) {
         auto t = a; a = b; b = t;
     }
-    if (_moistenedIDs.find(b->getTag()) == _moistenedIDs.end()) {
+    _newBrickMoistened = _moistenedIDs.find(b->getTag()) == _moistenedIDs.end();
+    if (_newBrickMoistened) {
         _moistenedIDs.insert(b->getTag());
         bricks::set_brick_colour(b->getNode(), Color3B::YELLOW);
     }
@@ -233,8 +239,8 @@ void FreePhysics::autoCullBricks(float dt)
     for (auto body: bodies) {
         if (body->getPosition().y < CULLING_BOUND) {
             // Out of bound. Let's remove this buddy(body)
-            indirect_touch::remove_all_arcs(body->getTag());
-            _moistenedIDs.erase(body->getTag());
+            if (_useSensor) indirect_touch::remove_all_arcs(body->getTag());
+            if (_useMoistening) _moistenedIDs.erase(body->getTag());
             // Update minimum and maximum IDs
             if (body->getTag() == _minID)
                 while (world->getBody(++_minID) == nullptr && _minID < _maxID) {}
