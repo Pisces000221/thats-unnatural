@@ -16,6 +16,10 @@
 // Application 'variables'
 #define HEIGHT_RATIO (Director::getInstance()->getVisibleSize().height / 480.0)
 
+// Logging
+#define LOGPOINT(__p__) CCLOG("%s = (%.2f, %.2f)", #__p__, (__p__).x, (__p__).y)
+#define LOGSIZE(__s__) CCLOG("%s = %.2f x %.2f", #__s__, (__s__).width, (__s__).height)
+
 // Static create functions
 #define SCENE_FUNC(__type__) \
 static cocos2d::Scene *createScene() { \

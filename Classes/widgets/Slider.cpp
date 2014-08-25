@@ -81,8 +81,6 @@ void Slider::setValue(float val)
     if (_callback) _callback(_val);
 }
 
-// TODO: Move this to AppMacros.h or (new file) Logging.h
-#define LOGPOINT(__p__) CCLOG("(%.2f, %.2f)", (__p__).x, (__p__).y)
 bool Slider::onTouchBegan(Touch *touch, Event *event)
 {
     if (!_validTouchRect.containsPoint(convertTouchToNodeSpace(touch)))

@@ -41,7 +41,7 @@ bool FreePhysics::init(PhysicsWorld *world)
     // The dashboard
     auto dashboard = Dashboard::create();
     dashboard->setPosition(Vec2(size.width, 0));
-    this->addChild(dashboard, DASHBOARD_ZORDER);
+    this->addChild(dashboard, DASHBOARD_ZORDER, TAG_DASHBOARD);
     dashboard->addLabel("GRAVITY");
     dashboard->addGravityPicker([world](Vec2 gravity) {
         world->setGravity(gravity);

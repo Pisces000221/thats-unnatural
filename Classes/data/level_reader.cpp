@@ -67,14 +67,15 @@ bool read_all()
         level l;
         l.id = v["id"].GetInt();
         l.objective = objective_str2enum[v["objective"].GetString()];
-        for (int j = 0; j < BRICK_TYPE_COUNT; j++) l.brick_type_enabled[j] = false;
         if (v.HasMember("brick_types")) {
+            for (int j = 0; j < bricks::BRICK_TYPE_COUNT; j++) l.brick_type_enabled[j] = false;
             rapidjson::Value &a = v["brick_types"];
             for (unsigned int j = 0; j < a.Size(); j++) {
                 string s = a[j].GetString();
                 l.brick_type_enabled[bricktype_str2int[s]] = true;
             }
-        }
+        } else
+            for (int j = 0; j < bricks::BRICK_TYPE_COUNT; j++) l.brick_type_enabled[j] = true;
 
         switch (l.objective) {
         case level_objective::MIN_HEIGHT:

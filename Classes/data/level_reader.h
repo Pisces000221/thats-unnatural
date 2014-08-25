@@ -3,9 +3,9 @@
 
 #include <map>
 #include <vector>
+#include "Bricks.h"
 using namespace std;
 
-#define BRICK_TYPE_COUNT 3
 namespace level_reader {
 
 typedef enum {
@@ -17,7 +17,7 @@ typedef enum {
 typedef struct {
     int id;
     level_objective objective;
-    bool brick_type_enabled[BRICK_TYPE_COUNT];
+    bool brick_type_enabled[bricks::BRICK_TYPE_COUNT];
     // Objectives
     // For stacking levels only
     double min_height;

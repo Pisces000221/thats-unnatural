@@ -43,6 +43,7 @@ protected:
     static const int TRAY_ID = 1;
     static const int MIN_BRICK_ID = 2;
     static const int BRICKS_GROUP = 0x1337;     // Keep this positive
+    static const int TAG_DASHBOARD = 0X0FE21F;  // What??? Firefox?
 };
 
 #endif

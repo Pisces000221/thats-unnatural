@@ -1,6 +1,7 @@
 #include "AppMacros.h"
 #include "Bricks.h"
 #include "data/level_reader.h"
+#include "LevelPlayScene.h"
 
 #include "LevelListScene.h"
 using namespace cocos2d;
@@ -15,7 +16,8 @@ const Color3B LevelList::groupColours[] = {
 };
 
 LevelList::LevelList()
-: _selectedNode(nullptr), _dragStarted(false), _dragStartPosY(0)
+: _selectedNode(nullptr), _selectedLevel(0),
+  _dragStarted(false), _dragStartPosY(0)
 { }
 
 bool LevelList::init(PhysicsWorld *world)
@@ -42,10 +44,11 @@ bool LevelList::init(PhysicsWorld *world)
 
     // The levels
     float cur_height = 0;
-    for (int i = 0; i < 90; i++) {
+    for (int i = 0; i < level_reader::level_count(); i++) {
         auto brk_level = bricks::new_circle(LEVEL_BRICK_SIDELEN * 0.5);
         bricks::set_brick_colour(brk_level, groupColours[(i / 10) % GROUP_COLOUR_COUNT]);
         cur_height += RAND_DECIMAL(-0.5, 1.5) * LEVEL_BRICK_SIDELEN;
+        ENSURE_IN_RANGE(cur_height, LEVEL_BRICK_SIDELEN * 1.5, 1e6);
         brk_level->setPosition(Vec2(
             RAND_DECIMAL(LEVEL_BRICK_SIDELEN / 2, size.width - LEVEL_BRICK_SIDELEN / 2),
             cur_height));
@@ -98,8 +101,8 @@ void LevelList::onTouchMoved(Touch *touch, Event *event)
 void LevelList::onTouchEnded(Touch *touch, Event *event)
 {
     this->resetSelected();
-    if (!_dragStarted) enterLevel(_selectedLevel);
-    _dragStarted = false;
+    if (!_dragStarted && _selectedLevel != 0) enterLevel(_selectedLevel);
+    _dragStarted = false; _selectedLevel = 0;
 }
 
 void LevelList::resetSelected()
@@ -114,5 +117,7 @@ void LevelList::resetSelected()
 void LevelList::enterLevel(int id)
 {
     CCLOG("Enter level %d", id);
+    LevelPlay::setLevelToLoad(level_reader::get_level(id));
+    GO_TO_SCENE(LevelPlay);
 }
 
