@@ -65,6 +65,7 @@ set(GAME_LOGIC_SRC
   Classes/widgets/Slider.cpp
   Classes/widgets/Dashboard.cpp
   Classes/widgets/Timepiece.cpp
+  Classes/widgets/Dialogue.cpp
   Classes/SplashScene.cpp
   Classes/StartupScene.cpp
   Classes/FreePhysicsScene.cpp

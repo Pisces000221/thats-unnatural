@@ -1,6 +1,6 @@
 [
     { "id": 1, "objective": "min_height", "goal": "0.4@3", "brick_types": ["boxes"] },
-    { "id": 2, "objective": "max_hitbricks", "goal": 20, "tot_time": 10, "brick_types": ["rects", "balls"] },
+    { "id": 2, "objective": "max_hitbricks", "goal": 20, "tot_time": 2, "brick_types": ["rects", "balls"] },
     { "id": 3, "objective": "min_height", "goal": "0.1@3", "tot_time": 30 },
     { "id": 4, "objective": "max_hitcount", "goal": 80, "tot_time": 15 },
     { "id": 5, "objective": "min_height", "goal": "0.1@20" },
