@@ -3,6 +3,7 @@
 
 #include "cocos2d.h"
 #include "data/level_reader.h"
+#include "widgets/Timepiece.h"
 #include "FreePhysicsScene.h"
 
 extern level_reader::level LevelPlay__0_ltl;
@@ -21,10 +22,17 @@ public:
 
 protected:
     level_reader::level _level;
+    void time_tick(float);
+    void refreshLabel();
     virtual void trayHit(PhysicsBody *, PhysicsBody *) override;
+    virtual void lineAttach() override;
+    virtual void lineDetach() override;
 
+    float _lastYPos;
     cocos2d::Label *_lbl_count;
     int _count; // For recording the hits
+    Timepiece *_timer, *_endurtimer;
+    float _tottime, _endurtime;
 };
 
 #endif

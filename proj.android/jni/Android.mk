@@ -20,6 +20,7 @@ LOCAL_SRC_FILES := unnatural/main.cpp \
                    ../../Classes/widgets/TickButton.cpp \
                    ../../Classes/widgets/Slider.cpp \
                    ../../Classes/widgets/Dashboard.cpp \
+                   ../../Classes/widgets/Timepiece.cpp \
                    ../../Classes/SplashScene.cpp \
                    ../../Classes/StartupScene.cpp \
                    ../../Classes/LevelListScene.cpp \

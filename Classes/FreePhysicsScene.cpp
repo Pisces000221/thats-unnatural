@@ -167,7 +167,10 @@ bool FreePhysics::onContactBegin(PhysicsContact &contact)
         indirect_touch::add_arc(
             contact.getShapeA()->getBody()->getTag(),
             contact.getShapeB()->getBody()->getTag());
-        if (indirect_touch::calculate()) lineAttach();
+        if (!_lineReached && indirect_touch::calculate()) {
+            _lineReached = true;
+            lineAttach();
+        }
     }
     // Is the tray being hit?
     if (_useMoistening &&
@@ -184,7 +187,10 @@ void FreePhysics::onContactSeperate(PhysicsContact &contact)
         indirect_touch::remove_arc(
             contact.getShapeA()->getBody()->getTag(),
             contact.getShapeB()->getBody()->getTag());
-        if (!indirect_touch::calculate()) lineDetach();
+        if (_lineReached && !indirect_touch::calculate()) {
+            _lineReached = false;
+            lineAboutDetach();
+        }
     }
 }
 
@@ -194,12 +200,13 @@ void FreePhysics::lineAttach()
     bricks::set_brick_colour(_sensorLine, Color3B::GREEN);
 }
 
-void FreePhysics::lineDetach()
+void FreePhysics::lineAboutDetach()
 {
     if (this->getScheduler()->isScheduled("LINE_DETACH", this)) return;
     this->getScheduler()->schedule([this](float dt) {
         this->getScheduler()->unschedule("LINE_DETACH", this);
         bricks::set_brick_colour(_sensorLine, Color3B::RED);
+        this->lineDetach();
     }, this, 0, kRepeatForever, LINE_DETACH_MAX_TIME, false, "LINE_DETACH"); 
 }
 

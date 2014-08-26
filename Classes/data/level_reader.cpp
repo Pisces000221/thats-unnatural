@@ -21,6 +21,7 @@ void init()
     objective_str2enum["min_height"] = level_objective::MIN_HEIGHT;
     objective_str2enum["stacking"] = level_objective::MIN_HEIGHT;
     objective_str2enum["max_hitbricks"] = level_objective::MAX_HITBRICKS;
+    objective_str2enum["max_hitcount"] = level_objective::MAX_HITCOUNT;
     bricktype_str2int = map<string, int>();
     bricktype_str2int["balls"] = 0;
     bricktype_str2int["circles"] = 0;
@@ -66,23 +67,35 @@ bool read_all()
 
         level l;
         l.id = v["id"].GetInt();
-        l.objective = objective_str2enum[v["objective"].GetString()];
+        // Load enabled brick types
         if (v.HasMember("brick_types")) {
-            for (int j = 0; j < bricks::BRICK_TYPE_COUNT; j++) l.brick_type_enabled[j] = false;
+            for (int j = 0; j < bricks::BRICK_TYPE_COUNT; j++)
+                l.brick_type_enabled[j] = false;
             rapidjson::Value &a = v["brick_types"];
             for (unsigned int j = 0; j < a.Size(); j++) {
                 string s = a[j].GetString();
                 l.brick_type_enabled[bricktype_str2int[s]] = true;
             }
         } else
-            for (int j = 0; j < bricks::BRICK_TYPE_COUNT; j++) l.brick_type_enabled[j] = true;
-
+            for (int j = 0; j < bricks::BRICK_TYPE_COUNT; j++)
+                l.brick_type_enabled[j] = true;
+        // Load time info
+        l.tot_time = (float)(v.HasMember("tot_time") ? v["tot_time"].GetDouble() : 0);
+        // Load objective info
+        l.objective = objective_str2enum[v["objective"].GetString()];
         switch (l.objective) {
         case level_objective::MIN_HEIGHT:
-            l.min_height = v["arg"].GetDouble();
+            if (v["goal"].IsString()) {
+                const char *s = static_cast<string>(v["goal"].GetString()).c_str();
+                sscanf(s, "%lf@%f", &l.min_height, &l.endurance_time);
+            } else {
+                l.min_height = v["goal"].GetDouble();
+                l.endurance_time = 3;
+            }
             break;
         case level_objective::MAX_HITBRICKS:
-            l.max_hitbricks = v["arg"].GetInt();
+        case level_objective::MAX_HITCOUNT:
+            l.max_hit = v["goal"].GetInt();
             break;
         default:
             continue;

@@ -12,7 +12,7 @@ class FreePhysics : public cocos2d::LayerColor
 public:
     FreePhysics() : _timeSinceLastBrickGen(0), _timeBtwnBrickGen(0),
         _lineTouchCount(0), _minID(MIN_BRICK_ID), _maxID(MIN_BRICK_ID - 1),
-        _useSensor(true), _useMoistening(true) {}
+        _useSensor(true), _useMoistening(true), _lineReached(false) {}
     virtual bool init(cocos2d::PhysicsWorld *world);
     PHY_CREATE_FUNC(FreePhysics);
     PHY_SCENE_FUNC(FreePhysics);
@@ -24,7 +24,8 @@ protected:
     bool onContactBegin(PhysicsContact &);
     void onContactSeperate(PhysicsContact &);
     virtual void lineAttach();
-    virtual void lineDetach();
+    virtual void lineAboutDetach();
+    virtual void lineDetach() {} // = 0;
     virtual void trayHit(PhysicsBody *, PhysicsBody *);
     void generateBrick();
     void autoCullBricks(float);
@@ -51,6 +52,7 @@ protected:
     bool _useMoistening;
     // Info used by LevelPlay
     bool _newBrickMoistened;
+    bool _lineReached;
 };
 
 #endif

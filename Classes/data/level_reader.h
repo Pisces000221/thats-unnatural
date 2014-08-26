@@ -18,13 +18,13 @@ typedef struct {
     int id;
     level_objective objective;
     bool brick_type_enabled[bricks::BRICK_TYPE_COUNT];
+    float tot_time;
     // Objectives
     // For stacking levels only
     double min_height;
-    // Hit bricks only
-    int max_hitbricks;
-    // Hit count only
-    int max_hitcount;
+    float endurance_time;
+    // Hit bricks/count only
+    int max_hit;
     // Weight mode only
     float min_weight;
 } level;
