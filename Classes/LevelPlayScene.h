@@ -27,6 +27,7 @@ protected:
     void time_tick(float);
     void refreshLabel();
     void gameOver(std::string);
+    void clearLevel();  // Call this instead of gameOver if level completed
     virtual void trayHit(PhysicsBody *, PhysicsBody *) override;
     virtual void lineAttach() override;
     virtual void lineDetach() override;

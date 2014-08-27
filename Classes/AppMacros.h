@@ -16,6 +16,9 @@
 // Application 'variables'
 #define HEIGHT_RATIO (Director::getInstance()->getVisibleSize().height / 480.0)
 
+// User default
+#define USER_DEFAULT (cocos2d::UserDefault::getInstance())
+
 // Logging
 #define LOGPOINT(__p__) CCLOG("%s = (%.2f, %.2f)", #__p__, (__p__).x, (__p__).y)
 #define LOGSIZE(__s__) CCLOG("%s = %.2f x %.2f", #__s__, (__s__).width, (__s__).height)

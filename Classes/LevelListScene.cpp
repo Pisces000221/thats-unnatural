@@ -6,6 +6,13 @@
 #include "LevelListScene.h"
 using namespace cocos2d;
 
+static LevelList *s_sharedLevelList;
+LevelList *LevelList::getInstance()
+{
+    if (!s_sharedLevelList) auto scene = LevelList::createScene();
+    return s_sharedLevelList;
+}
+
 #define LEVEL_BRICK_SIDELEN 64
 #define LIGHTEN(_c) (128 + (_c).r / 2), (128 + (_c).g / 2), (128 + (_c).b / 2)
 
@@ -15,14 +22,17 @@ const Color3B LevelList::groupColours[] = {
     Color3B(255, 192, 255), Color3B(255, 255, 192)
 };
 
+// http://blog.chinaunix.net/uid-17019762-id-3152012.html
 LevelList::LevelList()
-: _selectedNode(nullptr), _selectedLevel(0),
+: _levelsDisplayed(0), _maxHeight(0.0f), _lastLevelBrick(nullptr),
+  _selectedNode(nullptr), _selectedLevel(0),
   _dragStarted(false), _dragStartPosY(0)
 { }
 
 bool LevelList::init(PhysicsWorld *world)
 {
     if (!LayerColor::initWithColor(Color4B::WHITE)) return false;
+    s_sharedLevelList = this;
     Size size = Director::getInstance()->getVisibleSize();
     CREATE_GO_BACK_MENUITEM;
 
@@ -43,22 +53,10 @@ bool LevelList::init(PhysicsWorld *world)
     _frontLayer->addChild(edge_node);
 
     // The levels
-    float cur_height = 0;
-    for (int i = 0; i < level_reader::level_count(); i++) {
-        auto brk_level = bricks::new_circle(LEVEL_BRICK_SIDELEN * 0.5);
-        bricks::set_brick_colour(brk_level, groupColours[(i / 10) % GROUP_COLOUR_COUNT]);
-        cur_height += RAND_DECIMAL(-0.5, 1.5) * LEVEL_BRICK_SIDELEN;
-        ENSURE_IN_RANGE(cur_height, LEVEL_BRICK_SIDELEN * 1.5, 1e6);
-        brk_level->setPosition(Vec2(
-            RAND_DECIMAL(LEVEL_BRICK_SIDELEN / 2, size.width - LEVEL_BRICK_SIDELEN / 2),
-            cur_height));
-        char s[6]; sprintf(s, "%02d", i + 1);
-        auto lbl_level = LABEL(s, 32, "Light");
-        lbl_level->setNormalizedPosition(Vec2::ANCHOR_MIDDLE);
-        brk_level->addChild(lbl_level, 10); // Keep the number on the top
-        brk_level->setTag(i + TAG_LEVEL_0);
-        _frontLayer->addChild(brk_level);
-    }
+    CCLOG("%d", _levelsDisplayed);
+    int initialLevels = UserDefault::getInstance()->getIntegerForKey("levels_cleared", 0);
+    for (int i = 0; i <= initialLevels; i++) this->addLevel(false);
+    CCLOG("aha");
 
     // Enable touching
     auto listener = EventListenerTouchOneByOne::create();
@@ -103,6 +101,33 @@ void LevelList::onTouchEnded(Touch *touch, Event *event)
     this->resetSelected();
     if (!_dragStarted && _selectedLevel != 0) enterLevel(_selectedLevel);
     _dragStarted = false; _selectedLevel = 0;
+}
+
+void LevelList::addLevel(bool appending)
+{
+    auto size = Director::getInstance()->getVisibleSize();
+    float cur_height = appending ?
+        -_frontLayer->getPosition().y + size.height + LEVEL_BRICK_SIDELEN * 2
+        : _maxHeight;
+    int i = _levelsDisplayed++;
+    auto brk_level = bricks::new_circle(LEVEL_BRICK_SIDELEN * 0.5);
+    if (!appending) _maxHeight += RAND_DECIMAL(-0.5, 1.5) * LEVEL_BRICK_SIDELEN;
+    ENSURE_IN_RANGE(cur_height, LEVEL_BRICK_SIDELEN * 1.5, 1e6);
+    brk_level->setPosition(Vec2(
+        RAND_DECIMAL(LEVEL_BRICK_SIDELEN / 2, size.width - LEVEL_BRICK_SIDELEN / 2),
+        cur_height));
+    char s[6]; sprintf(s, "%02d", i + 1);
+    auto lbl_level = LABEL(s, 32, "Light");
+    lbl_level->setNormalizedPosition(Vec2::ANCHOR_MIDDLE);
+    brk_level->addChild(lbl_level, 10); // Keep the number on the top
+    brk_level->setTag(i + TAG_LEVEL_0);
+    _frontLayer->addChild(brk_level);
+    // Bring the colour of the last brick back
+    bricks::set_brick_colour(brk_level, Color3B::WHITE);
+    if (_lastLevelBrick)
+        bricks::set_brick_colour(_lastLevelBrick,
+            groupColours[((i - 1) / 10) % GROUP_COLOUR_COUNT]);
+    _lastLevelBrick = brk_level;
 }
 
 void LevelList::resetSelected()

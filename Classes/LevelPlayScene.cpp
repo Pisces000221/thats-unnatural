@@ -1,6 +1,7 @@
 #include "LevelPlayScene.h"
 #include "Bricks.h"
 #include "widgets/Dialogue.h"
+#include "LevelListScene.h"
 using namespace cocos2d;
 using level_reader::level_objective;
 
@@ -131,12 +132,23 @@ void LevelPlay::time_tick(float dt)
     if (_lineReached) {
         _endurtime += dt;
         _endurtimer->setTime(1 - _endurtime / _level.endurance_time);
+        if (_endurtime >= _level.endurance_time) clearLevel();
     } else if (_level.tot_time > 0) {
         _tottime += dt;
-        if (_tottime >= _level.tot_time)
-            this->gameOver("Congratulations!\nYou made it!");
+        if (_tottime >= _level.tot_time) clearLevel();
         else if (_tottime > 0)
             _timer->setTime(1 - _tottime / _level.tot_time);
+    }
+}
+
+void LevelPlay::clearLevel()
+{
+    this->gameOver("Good job!\nYou made it!");
+    // Save data
+    int cleared = USER_DEFAULT->getIntegerForKey("levels_cleared", 0);
+    if (cleared < _level.id) {
+        USER_DEFAULT->setIntegerForKey("levels_cleared", _level.id);
+        LevelList::getInstance()->addLevel();
     }
 }
 
