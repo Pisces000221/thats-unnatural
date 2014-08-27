@@ -26,19 +26,23 @@ bool Dialogue::init()
     _lblMsg->setNormalizedPosition(Vec2(0.5, 0.618));
     this->addChild(_lblMsg);
 
+    // The layer that's under the menus
+    auto blanket = LayerColor::create(Color4B(255, 255, 255, 128));
+    blanket->setNormalizedPosition(Vec2(0, -0.64));
+    this->addChild(blanket);
     auto img_back = Sprite::create("images/back.png");
     img_back->setAnchorPoint(Vec2(0.5, 0.4));
-    img_back->setNormalizedPosition(Vec2(0.2, 0.3));
+    img_back->setNormalizedPosition(Vec2(0.2, 0.28));
     this->addChild(img_back);
     auto item_back = MenuItemLabel::create(
         LABEL("RETURN", 48, "Bold", Color3B::GREEN),
         [this](Ref *sender) { GO_BACK_ANIMATED; }
     );
-    item_back->setNormalizedPosition(Vec2(0.6, 0.3));
+    item_back->setNormalizedPosition(Vec2(0.6, 0.28));
     this->addChild(MENU(item_back));
     auto img_retry = Sprite::create("images/retry.png");
     img_retry->setAnchorPoint(Vec2(0.5, 0.4));
-    img_retry->setNormalizedPosition(Vec2(0.8, 0.2));
+    img_retry->setNormalizedPosition(Vec2(0.7, 0.15));
     this->addChild(img_retry);
     auto item_retry = MenuItemLabel::create(
         LABEL("RETRY", 48, "Bold", Color3B(128, 255, 255)),
@@ -46,10 +50,9 @@ bool Dialogue::init()
             auto p = dynamic_cast<RetriableProtocol *>(this->getParent());
             if (p) p->retry();
             else GO_BACK_ANIMATED;
-            if (this->getParent()) this->removeFromParent();
         }
     );
-    item_retry->setNormalizedPosition(Vec2(0.3, 0.2));
+    item_retry->setNormalizedPosition(Vec2(0.4, 0.15));
     this->addChild(MENU(item_retry));
 
     // Eat those touches
