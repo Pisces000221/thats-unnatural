@@ -98,6 +98,15 @@ bool LevelPlay::init(PhysicsWorld *world)
     return true;
 }
 
+void LevelPlay::retry()
+{
+    CCLOG("Retry!");
+    //this->removeAllChildren();
+    //this->init(this->getScene()->getPhysicsWorld());
+    Director::getInstance()->replaceScene(TransitionFade::create(
+        0.8, LevelPlay::createScene(), Color3B::WHITE));
+}
+
 void LevelPlay::refreshLabel()
 {
     char s[20]; sprintf(s, "%d / %d", _count, _level.max_hit);

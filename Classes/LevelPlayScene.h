@@ -4,11 +4,12 @@
 #include "cocos2d.h"
 #include "data/level_reader.h"
 #include "widgets/Timepiece.h"
+#include "RetriableProtocol.h"
 #include "FreePhysicsScene.h"
 
 extern level_reader::level LevelPlay__0_ltl;
 
-class LevelPlay : public FreePhysics
+class LevelPlay : public FreePhysics, public RetriableProtocol
 {
 public:
     // Call this before calling createScene()
@@ -17,6 +18,7 @@ public:
     virtual bool init(cocos2d::PhysicsWorld *world) override;
     PHY_CREATE_FUNC(LevelPlay);
     PHY_SCENE_FUNC(LevelPlay);
+    virtual void retry() override;
 
     static const char *readyMsg[6];
 

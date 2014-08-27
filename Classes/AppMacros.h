@@ -85,7 +85,10 @@ static cocos2d::Scene *createScene() { \
 
 // Global function declarations
 cocos2d::Label *LABEL(std::string text, int size = 12, 
-    std::string style = "", float maxlen = 0);
+    std::string style = "",
+    cocos2d::Color3B colour = cocos2d::Color3B::BLACK,
+    float maxlen = 0);
+cocos2d::Menu *MENU(cocos2d::MenuItem *single_item);
 
 // Global macro functions
 #define RAND_0_1 ((float)rand() / (float)RAND_MAX)

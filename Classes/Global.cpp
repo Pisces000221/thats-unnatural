@@ -1,6 +1,7 @@
 #include "AppMacros.h"
 
-cocos2d::Label *LABEL(std::string text, int size, std::string style, float maxlen)
+cocos2d::Label *LABEL(std::string text, int size,
+    std::string style, cocos2d::Color3B colour, float maxlen)
 {
     unsigned int p = style.find_first_of(".");
     cocos2d::TextHAlignment align = cocos2d::TextHAlignment::CENTER;
@@ -20,7 +21,15 @@ cocos2d::Label *LABEL(std::string text, int size, std::string style, float maxle
     cocos2d::Label *label = cocos2d::Label::createWithTTF(
         cocos2d::TTFConfig(("fonts/JosefinSans-" + style + ".ttf").c_str(), size),
         text, align, maxlen);
-    label->setColor(cocos2d::Color3B::BLACK);
+    label->setColor(colour);
     return label;
+}
+
+cocos2d::Menu *MENU(cocos2d::MenuItem *single_item)
+{
+    cocos2d::Menu *menu = cocos2d::Menu::create();
+    menu->addChild(single_item);
+    menu->setPosition(cocos2d::Vec2::ZERO);
+    return menu;
 }
 
