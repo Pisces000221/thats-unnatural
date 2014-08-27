@@ -21,7 +21,7 @@ bool Dialogue::init()
     _lblTitle->setNormalizedPosition(Vec2(0.5, 0.618));
     this->addChild(_lblTitle);
 
-    _lblMsg = LABEL("", 48, "Light");
+    _lblMsg = LABEL("", 42, "Light", Color3B::BLACK);
     _lblMsg->setAnchorPoint(Vec2::ANCHOR_MIDDLE_TOP);
     _lblMsg->setNormalizedPosition(Vec2(0.5, 0.618));
     this->addChild(_lblMsg);

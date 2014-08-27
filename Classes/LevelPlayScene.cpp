@@ -95,6 +95,7 @@ bool LevelPlay::init(PhysicsWorld *world)
         this->addChild(lbl_ready);
     }
 
+    _gameEnded = false;
     return true;
 }
 
@@ -113,6 +114,18 @@ void LevelPlay::refreshLabel()
     _lbl_count->setString(s);
 }
 
+void LevelPlay::gameOver(std::string message)
+{
+    if (_gameEnded) return;
+    _gameEnded = true;
+    this->getScheduler()->unschedule("LEVEL_TICK", this);
+    Dialogue *dialogue = Dialogue::create();
+    char s_title[25]; sprintf(s_title, "LEVEL %02d", _level.id);
+    dialogue->setTitle(s_title);
+    dialogue->setMessage(message);
+    this->addChild(dialogue, INT_MAX);
+}
+
 void LevelPlay::time_tick(float dt)
 {
     if (_lineReached) {
@@ -120,14 +133,9 @@ void LevelPlay::time_tick(float dt)
         _endurtimer->setTime(1 - _endurtime / _level.endurance_time);
     } else if (_level.tot_time > 0) {
         _tottime += dt;
-        if (_tottime >= _level.tot_time) {
-            this->getScheduler()->unschedule("LEVEL_TICK", this);
-            Dialogue *dialogue = Dialogue::create();
-            char s_title[25]; sprintf(s_title, "LEVEL %02d", _level.id);
-            dialogue->setTitle(s_title);
-            dialogue->setMessage("Congratulations!\nYou made it!");
-            this->addChild(dialogue, INT_MAX);
-        } else if (_tottime > 0)
+        if (_tottime >= _level.tot_time)
+            this->gameOver("Congratulations!\nYou made it!");
+        else if (_tottime > 0)
             _timer->setTime(1 - _tottime / _level.tot_time);
     }
 }
@@ -140,6 +148,8 @@ void LevelPlay::trayHit(PhysicsBody *a, PhysicsBody *b)
             _newBrickMoistened)) {
         _count++;
         refreshLabel();
+        if (_count > _level.max_hit)
+            this->gameOver("Oh no!\nThe tray is broken.");
     }
 }
 

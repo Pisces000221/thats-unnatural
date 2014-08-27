@@ -26,6 +26,7 @@ protected:
     level_reader::level _level;
     void time_tick(float);
     void refreshLabel();
+    void gameOver(std::string);
     virtual void trayHit(PhysicsBody *, PhysicsBody *) override;
     virtual void lineAttach() override;
     virtual void lineDetach() override;
@@ -35,6 +36,7 @@ protected:
     int _count; // For recording the hits
     Timepiece *_timer, *_endurtimer;
     float _tottime, _endurtime;
+    bool _gameEnded;
 };
 
 #endif
