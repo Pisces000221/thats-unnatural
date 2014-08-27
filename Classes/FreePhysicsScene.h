@@ -34,7 +34,7 @@ protected:
     // Stores touches that are not released
     std::unordered_map<int, Node *> _nails;
     // Stores bricks that have hit the tray
-    std::unordered_set<int> _moistenedIDs;
+    std::unordered_map<int, clock_t> _moistenTime;
 
     bricks::etype _enabledBrickTypes;
     cocos2d::Node *_sensorLine;
@@ -52,6 +52,7 @@ protected:
     bool _useMoistening;
     // Info used by LevelPlay
     bool _newBrickMoistened;
+    bool _validHitCount;
     bool _lineReached;
 };
 

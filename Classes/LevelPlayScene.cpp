@@ -155,7 +155,8 @@ void LevelPlay::clearLevel()
 void LevelPlay::trayHit(PhysicsBody *a, PhysicsBody *b)
 {
     FreePhysics::trayHit(a, b);
-    if (_level.objective == level_objective::MAX_HITCOUNT
+    if ((_level.objective == level_objective::MAX_HITCOUNT
+            && _validHitCount)
             || (_level.objective == level_objective::MAX_HITBRICKS &&
             _newBrickMoistened)) {
         _count++;

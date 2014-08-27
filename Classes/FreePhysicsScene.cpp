@@ -6,6 +6,8 @@
 #include "FreePhysicsScene.h"
 using namespace cocos2d;
 
+#define HIT_COUNT_MIN_INTERVAL 0.1f
+
 #define DRAGGABLE_MIN_ID 2
 #define DATA_IGNORED_CONTACT 0x5f3759df // Uh...
 #define BRICK_INIT_Y_OFFSET 30  // A newly generated brick will be height+30 points high
@@ -216,10 +218,16 @@ void FreePhysics::trayHit(PhysicsBody *a, PhysicsBody *b)
     if (b->getTag() == TRAY_ID) {
         auto t = a; a = b; b = t;
     }
-    _newBrickMoistened = _moistenedIDs.find(b->getTag()) == _moistenedIDs.end();
+    auto it = _moistenTime.find(b->getTag());
+    _newBrickMoistened = it == _moistenTime.end();
     if (_newBrickMoistened) {
-        _moistenedIDs.insert(b->getTag());
+        _moistenTime.insert(std::make_pair<int, clock_t>(b->getTag(), clock()));
         bricks::set_brick_colour(b->getNode(), Color3B::YELLOW);
+        _validHitCount = true;
+    } else {
+        _validHitCount = (float)(clock() - it->second)
+            > HIT_COUNT_MIN_INTERVAL * CLOCKS_PER_SEC;
+        it->second = clock();
     }
 }
 
@@ -247,7 +255,7 @@ void FreePhysics::autoCullBricks(float dt)
         if (body->getPosition().y < CULLING_BOUND) {
             // Out of bound. Let's remove this buddy(body)
             if (_useSensor) indirect_touch::remove_all_arcs(body->getTag());
-            if (_useMoistening) _moistenedIDs.erase(body->getTag());
+            if (_useMoistening) _moistenTime.erase(body->getTag());
             // Update minimum and maximum IDs
             if (body->getTag() == _minID)
                 while (world->getBody(++_minID) == nullptr && _minID < _maxID) {}
